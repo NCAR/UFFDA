@@ -1,0 +1,43 @@
+###############################################
+#         Testing frame work for UPP          #
+###############################################
+#
+# Documented: Ka Yee Wong (NOAA/GSD)  Sept 2018
+#
+###############################################
+#
+# Tested on Cheyenne:                 Sept 2018
+#
+###############################################
+# Compile UPP with compile.sh
+How to run compile.sh?
+1) Set your tar file name and tar file type:
+TAR_FILE_NAME = "your_tar_file_name"
+TAR_FILE_EXT = ".tar" # ONLY work for '.tar' for now
+2) Set your compiler type: 
+CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 4)Intel(dmpar) 3)Intel(serial) 7)GNU(serial) 8)GNU(dmpar)
+3) run the shell script
+./compile.sh
+# Please check your "targetDir" if you are NOT running this script on Cheyenne
+
+#  Run test cases with run.sh
+How to run run.sh?
+1) Set your tar file name and tar file type:
+TAR_FILE_NAME = "your_tar_file_name"
+2) type of GRIB input file 
+outFormat = 'grib' # 'grib' or 'grib2'
+3) Set your path for the test case results to be located 
+RunPath = 'your_working_directory_path'
+4) Set the number of test cases
+numR  = 10 
+5) Set your compiler type: 
+CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 4)Intel(dmpar) 3)Intel(serial) 7)GNU(serial) 8)GNU(dmpar)
+6) Set test case data path
+DataPath = 'your_data_path'
+7)Set the path for the extra files # including the wgrib or/and wgrib2
+ExtraPath = 'your_path'
+8) Set the last forecast hour 
+lastfhr = 18
+9) run the shell script
+./run.sh
+# Please check your "DataPath" and "WRF_DIR" if you are NOT running this script on Cheyenne
