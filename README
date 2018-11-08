@@ -11,33 +11,49 @@
 ###############################################
 # Compile UPP with compile.sh
 How to run compile.sh?
-1) Set your tar file name and tar file type:
-TAR_FILE_NAME = "your_tar_file_name"
-TAR_FILE_EXT = ".tar" # ONLY work for '.tar' for now
-2) Set your compiler type: 
-CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 4)Intel(dmpar) 3)Intel(serial) 7)GNU(serial) 8)GNU(dmpar)
-3) run the shell script
+1) Choose your UPP source code location:
+set source = (3) # 1) source code from vlab 2) source code from local path 3) source code from github
+i) Set your directory name(e.g. DTC_UPP_github_v6f54859):
+FILE_NAME = "your_preferred_directory_name"
+ii) Set the UPP vlab/github path:
+repository = "your_github_path"
+Or set the local UPP path:
+set upppath = "/gpfs/fs1/work/user/UPPV3.2"  # Local path that you want to copy from (no tar file)
+2) Set the machine name: 
+COMPUTER_OPTION = "machine_name" # theia/cheyenne/hydra for now
+3) Set your compiler type: 
+CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
+5) run the shell script
 ./compile.sh
-# Please check your "targetDir" if you are NOT running this script on Cheyenne
+#note!!! Please check your "targetDir" if you are NOT running this script on Cheyenne/Theia/Hydra !!!
+6) Please enter your vlab/github login and password twice (for UPP code and CRTM module subset)
+Cloning into 'DTC_UPP_github_v6f54859'...
+Username for 'https://github.com': 
+Password for 'https://your_name@github.com': 
+Cloning into 'src/lib/crtm2'...
+Username for 'https://github.com': 
+Password for 'https://your_name@github.com': 
 
 #  Run test cases with run.sh
 How to run run.sh?
-1) Set your tar file name and tar file type:
-TAR_FILE_NAME = "your_tar_file_name"
+1) Set your file name (must match your compiled UPP directory name)
+FILE_NAME = "your_file_name" # should match the FILE_NAME from compile.sh
 2) type of GRIB input file 
 outFormat = 'grib' # 'grib' or 'grib2'
 3) Set your path for the test case results to be located 
 RunPath = 'your_working_directory_path'
-4) Set the number of test cases
+4) Set the number of test cases (10 cases max)
 numR  = 10 
-5) Set your compiler type: 
+5) Set the machine name: 
+COMPUTER_OPTION = "machine_name" # theia/cheyenne/hydra for now
+6) Set your compiler type: 
 CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 4)Intel(dmpar) 3)Intel(serial) 7)GNU(serial) 8)GNU(dmpar)
-6) Set test case data path
+7) Set test case data path
 DataPath = 'your_data_path'
-7)Set the path for the extra files # including the wgrib or/and wgrib2
+8)Set the path for the extra files # including the wgrib or/and wgrib2
 ExtraPath = 'your_path'
-8) Set the last forecast hour 
+9) Set the last forecast hour 
 lastfhr = 18
-9) run the shell script
+10) run the shell script
 ./run.sh
-# Please check your "DataPath" and "WRF_DIR" if you are NOT running this script on Cheyenne
+# Please check your "DataPath", "ExtraPath" and "WRF_DIR" if you are NOT running this script on Cheyenne/Theia/Hydra.
