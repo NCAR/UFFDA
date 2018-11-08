@@ -2,11 +2,13 @@
 #         Testing frame work for UPP          #
 ###############################################
 #
-# Documented: Ka Yee Wong (NOAA/GSD)  Sept 2018
+# Documented: Ka Yee Wong (NOAA/GSD)  Sep 2018
+#     Edited: Ka Yee Wong (NOAA/GSD)  Nov 2018
 #
 ###############################################
 #
-# Tested on Cheyenne:                 Sept 2018
+# Tested on Cheyenne:                 Sep 2018
+# Tested on Cheyenne:                 Nov 2018
 #
 ###############################################
 # Compile UPP with compile.sh
