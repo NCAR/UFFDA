@@ -9,6 +9,7 @@
 #
 # Tested on Cheyenne:                 Sep 2018
 # Tested on Cheyenne:                 Nov 2018
+# Tested on Cheyenne:                 Jan 2019
 #
 ###############################################
 # Compile UPP with compile.sh
@@ -28,13 +29,11 @@ CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dm
 5) run the shell script
 ./compile.sh
 #note!!! Please check your "targetDir" if you are NOT running this script on Cheyenne/Theia/Hydra !!!
-6) Please enter your vlab/github login and password twice (for UPP code and CRTM module subset)
+6) Please enter your vlab/github login and password (for UPP code and CRTM module subset)
 Cloning into 'DTC_UPP_github_v6f54859'...
 Username for 'https://github.com': 
 Password for 'https://your_name@github.com': 
 Cloning into 'src/lib/crtm2'...
-Username for 'https://github.com': 
-Password for 'https://your_name@github.com': 
 
 #  Run test cases with run.sh
 How to run run.sh?
@@ -54,8 +53,7 @@ CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 4)Intel(dmpar) 3)Intel(ser
 DataPath = 'your_data_path'
 8)Set the path for the extra files # including the wgrib or/and wgrib2
 ExtraPath = 'your_path'
-9) Set the last forecast hour 
-lastfhr = 18
+9)Set the path for the bench mark files #for the regression test      
 10) run the shell script
-./run.sh
-# Please check your "DataPath", "ExtraPath" and "WRF_DIR" if you are NOT running this script on Cheyenne/Theia/Hydra.
+qsub ./run.pbs
+# Please check your "DataPath", "ExtraPath" and "CNTLPath" if you are NOT running this script on Cheyenne/Theia/Hydra.

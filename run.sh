@@ -3,35 +3,38 @@
 #
 # Oirg. Code: Ka Yee Wong  (NOAA/GSD) Jun  2017
 # Edit. Code: Ka Yee Wong  (NOAA/GSD) Nov  2018
-# Tested on Theia:                    Jun  2017
-# Tested on cheyenne:                 Nov  2018
+# Tested on Theia:                    Jan  2019
+# Tested on cheyenne:                 Jan  2019
 # Tested on Hydra by Tracy:           Nov  2018
 #
 ###############################################
 # Run at background:
-# # > run.csh > & runout &
+# # > qsub run.pbs
 # # Want to terminate/kill the job:
-# # > jobs
-# # > kill %1
+# # > qstat
 # # or
 # # > ps
-# # > kill -9 PID
+# # > qdel job ID
 ###############################################
 ###############################################
 #!!!!!!!!!!!!!!User Define Here!!!!!!!!!!!!!!!#
 ###############################################
- set FILE_NAME = "DTC_UPP_github_crtm"   # should match the FILE_NAME from compile.sh
+ set FILE_NAME = "DTC_UPP_vlab"   # should match the FILE_NAME from compile.sh
+ #set FILE_NAME = "DTC_UPP_github_crtm"   # should match the FILE_NAME from compile.sh
  #set FILE_NAME = "DTC_UPP_local_path_test"
  set outFormat = 'grib2' # 'grib' or 'grib2'
- set RunPath = '/gpfs/fs1/work/kayee/tmp/' #Set your path for the test case results to be located
- set numR  = 2  # # of test cases
+ set RunPath = '/gpfs/fs1/work/kayee/UPP/UFFDA/GITHUB/mike/' #Set your path for the test case results to be located
+ #set RunPath = '/gpfs/fs1/work/kayee/tmp/' #Set your path for the test case results to be located
+ set numR  = 10 # # of test cases
  set COMPUTER_OPTION = "cheyenne" # theia/cheyenne/hydra for now
  set CONFIG_OPTION = (3 4 7 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
  set DataPath = '/gpfs/fs1/p/ral/jntp/UPP/data/wrf2008/'
  set ExtraPath = '/gpfs/fs1/p/ral/jntp/UPP/public/'
- set lastfhr  = 18
- #set lastfhr  = 24
- set sleepT = 5
+ set CNTLPath='/gpfs/fs1/p/ral/jntp/UPP/UFFDA/bench_mark'
+ #set sleepT = 0
+ #set sleepR = 0
+ #set sleepM = 0
+ #set sleepRlong = 1800
 #
 ###############################################
 ###############################################
@@ -53,15 +56,13 @@
  module load intel/16.1.150
  module load impi
  module load netcdf/3.6.3
- set WRF_DIR='/scratch3/BMC/wrf-chem/KaYee/PRECOMPILED_WRF/WRFV3.9_Intel_dmpar_large-file'
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
  module load intel mpt netcdf ncarcompilers
  #setenv LD_LIBRARY_PATH "${LD_LIBRARY_PATH}:/glade/u/apps/ch/opt/netcdf/4.6.1/intel/17.0.1/lib"
- set WRF_DIR='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_Intel_dmpar_large-file'
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
-#source /home/hertneky/wheezy-intel.csh
- echo 'Note: No WRF bulit on hydra with Intel!!'
+ source /home/hertneky/wheezy-intel.csh
+# echo 'Note: No WRF bulit on hydra with Intel!!'
  endif
  else if($CONFIG_OPTION[$ii] == 3)then
  rm -rf ${FILE_NAME}_test_cases_Intel_serial_${outFormat}
@@ -73,14 +74,12 @@
  module purge
  module load intel/16.1.150
  module load netcdf/3.6.3
- set WRF_DIR='/scratch3/BMC/wrf-chem/KaYee/PRECOMPILED_WRF/WRFV3.9_Intel_serial_large-file/'
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
  module load intel netcdf ncarcompilers
- set WRF_DIR='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_Intel_serial_large-file'
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
- #source /home/hertneky/wheezy-intel.csh
- echo 'Note: No WRF bulit on hydra with Intel!!'
+ source /home/hertneky/wheezy-intel.csh
+#echo 'Note: No WRF bulit on hydra with Intel!!'
  endif
  else if($CONFIG_OPTION[$ii] == 7 || $CONFIG_OPTION[$ii] == 11)then
  rm -rf ${FILE_NAME}_test_cases_GNU_serial_${outFormat}
@@ -89,15 +88,15 @@
  eval set UPPPath = ${RunPath}\'${FILE_NAME}_GNU_serial/\'
  eval set CasesDir = ${RunPath}\'${FILE_NAME}_test_cases_GNU_serial_${outFormat}/\'
  if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
- echo 'Note: No WRF serial GNU bulit on Theia!!'
+# echo 'Note: No WRF serial GNU bulit on Theia!!'
+ module purge
+ module load gnu netcdf 
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
  module load gnu netcdf ncarcompilers
- set WRF_DIR='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_GNU_serial_large-file'
  module load grads
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
  source /home/hertneky/wheezy-gf.csh
- set WRF_DIR='/d1/hertneky/wtf_upp/Builds/WRFV3.7.1.32/em_real/WRFV3'
  endif
  else if($CONFIG_OPTION[$ii] == 8 || $CONFIG_OPTION[$ii] == 12)then
  rm -rf ${FILE_NAME}_test_cases_GNU_dmpar_${outFormat}
@@ -107,15 +106,15 @@
  eval set CasesDir = ${RunPath}\'${FILE_NAME}_test_cases_GNU_dmpar_${outFormat}/\'
  if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
  echo 'Note: No WRF parallel GNU bulit on Theia!!'
+ module purge
+ module load gnu mpi netcdf 
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
  module load gnu mpt netcdf ncarcompilers
- set WRF_DIR='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_GNU_dmpar_large-file'
  module load grads
  module load mpt
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
  source /home/hertneky/wheezy-gf.csh
- set WRF_DIR='/d1/hertneky/wtf_upp/Builds/WRFV3.7.1.34/em_real/WRFV3'
  endif
  else if($CONFIG_OPTION[$ii] == 2)then
  rm -rf ${FILE_NAME}_test_cases_PGI_dmpar_${outFormat}
@@ -128,16 +127,13 @@
  module load pgi/17.1
  module load mvapich2/2.1rc1
  module load netcdf/3.6.3
- set WRF_DIR='/scratch3/BMC/wrf-chem/KaYee/PRECOMPILED_WRF/WRFV3.9_PGI_dmpar_large-file/'
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
  module load pgi mpt netcdf ncarcompilers
- set WRF_DIR='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_PGI_dmpar_large-file'
  module load grads
  module load mpt
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
  source /home/hertneky/wheezy-pgi.csh
- set WRF_DIR='/d1/hertneky/wtf_upp/Builds/WRFV3.7.1.3/em_real/WRFV3'
  endif
  else if($CONFIG_OPTION[$ii] == 1)then
  rm -rf ${FILE_NAME}_test_cases_PGI_serial_${outFormat}
@@ -149,15 +145,12 @@
  module purge
  module load pgi/17.1
  module load netcdf/3.6.3
- set WRF_DIR='/scratch3/BMC/wrf-chem/KaYee/PRECOMPILED_WRF/WRFV3.9_PGI_serial_large-file/'
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
  module load pgi netcdf ncarcompilers
- set WRF_DIR='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_PGI_serial_large-file'
  module load grads
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
  source /home/hertneky/wheezy-pgi.csh
- set WRF_DIR='/d1/hertneky/wtf_upp/Builds/WRFV3.7.1.1/em_real/WRFV3'
  endif
  endif
  rm -rf case*
@@ -200,8 +193,10 @@
  ln -svf $ExtraPath/wgrib .
  cp $UPPPath/scripts/run_unipostandgrads .
  ln -svf $ExtraPath/run_mpi.pbs .
+ ln -svf $ExtraPath/run_mpi_rt.pbs .
  eval set DataCase = ${DataPath}\'ps\'${bb}
  echo $DataCase
+ set lastfhr  = 18
  if($bb <= 6)then
  set startdate = '2008011100'
  else if($bb == 7)then
@@ -211,9 +206,12 @@
  else if($bb == 9)then
  set startdate = '2012102900'
  else if($bb == 10)then
- set startdate = '2016012200' #hi-res case
+ set startdate = '2018010700' #hi-res case
+ set lastfhr  = 6
  rm run_mpi.pbs
+ if($outFormat == "grib")then
  ln -svf $ExtraPath/run_mpi_hi.pbs run_mpi.pbs
+ endif
  endif
  eval set DOMAINPATH = ${CasesDir}${case}
  eval set postexec = ${UPPPath}\'/bin\'
@@ -221,18 +219,22 @@
  sed -i -e "/export/s|outFormat=[^ ]*|outFormat=$outFormat|" run_unipostandgrads
  sed -i -e "/export/s|TOP_DIR=[^ ]*|TOP_DIR=$RunPath|" run_unipostandgrads
  sed -i -e "/export/s|DOMAINPATH=[^ ]*|DOMAINPATH=$DOMAINPATH|" run_unipostandgrads
- sed -i -e "/export/s|WRFPATH=[^ ]*|WRFPATH=$WRF_DIR|" run_unipostandgrads
  sed -i -e "/export/s|UNIPOST_HOME=[^ ]*|UNIPOST_HOME=$UPPPath|" run_unipostandgrads
  sed -i -e "/export/s|POSTEXEC=[^ ]*|POSTEXEC=$postexec|" run_unipostandgrads
  sed -i -e "/export/s|modelDataPath=[^ ]*|modelDataPath=$DataCase|" run_unipostandgrads
  sed -i -e "/export/s|startdate=[^ ]*|startdate=$startdate|" run_unipostandgrads
  sed -i -e "/export/s|lastfhr=[^ ]*|lastfhr=$lastfhr|" run_unipostandgrads
  if($bb == 10)then
- set domain_list = 'd02'
+ #set domain_list = 'd02'
  set incrementhr = '01'
- sed -i -e "/export/s|domain_list=[^ ]*|domain_list=$domain_list|" run_unipostandgrads
+ #sed -i -e "/export/s|domain_list=[^ ]*|domain_list=$domain_list|" run_unipostandgrads
  sed -i -e "/export/s|incrementhr=[^ ]*|incrementhr=$incrementhr|" run_unipostandgrads
+ #set dom = 'd02'
+ #else
+ #set dom = 'd01'
  endif
+
+ set dom = 'd01'
 
  if($CONFIG_OPTION[$ii] == 2 ||\
     $CONFIG_OPTION[$ii] == 4 ||\
@@ -252,6 +254,59 @@
  echo 'CONFIG_OPTION IS SERIAL ' $CONFIG_OPTION[$ii]
  endif
 
+ #sleep $sleepM
+ 
+ if($outFormat == "grib2")then
+ if($bb <= 9)then
+ ln -svf $ExtraPath/run_mpi_rt.pbs run_mpi.pbs
+ else if($bb == 10)then
+ ln -svf $ExtraPath/run_mpi_rt_hi.pbs run_mpi.pbs
+ endif
+ #ln -svf $ExtraPath/cmp_grib2_grib2.sh .
+ cp $ExtraPath/run_rt.pbs .
+ if($CONFIG_OPTION[$ii] == 3)then
+ eval set CNTLCase = ${CNTLPath}/Intel_serial/\'ps\'${bb}
+ else if($CONFIG_OPTION[$ii] == 4)then
+ eval set CNTLCase = ${CNTLPath}/Intel_dmpar/\'ps\'${bb}
+ else if($CONFIG_OPTION[$ii] == 7 || $CONFIG_OPTION[$ii] == 11)then
+ eval set CNTLCase = ${CNTLPath}/GNU_serial/\'ps\'${bb}
+ else if($CONFIG_OPTION[$ii] == 8 || $CONFIG_OPTION[$ii] == 12)then
+ eval set CNTLCase = ${CNTLPath}/GNU_dmpar/\'ps\'${bb}
+ else if($CONFIG_OPTION[$ii] == 1)then
+ eval set CNTLCase = ${CNTLPath}/PGI_serial/\'ps\'${bb}
+ else if($CONFIG_OPTION[$ii] == 2)then
+ eval set CNTLCase = ${CNTLPath}/PGI_dmpar/\'ps\'${bb}
+ endif
+ echo 'CNTLCase =' $CNTLCase
+ ln -svf $CNTLCase/* .
+ #if($bb == 10)then
+ #sleep $sleepRlong
+ #else
+ #sleep $sleepR
+ #endif
+ set cc = 0
+ while ($cc <= 18)
+ if($cc <= 9)then
+ eval set ending = \'0\'${cc}
+ eval set cmp_line='\.\/wgrib2\ $CNTLCase/CNTL_WRFPRS_$dom\.${ending}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/WRFPRS_$dom\.${ending}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${ending}\.txt'
+ else
+ eval set cmp_line='\.\/wgrib2\ $CNTLCase/CNTL_WRFPRS_$dom\.${cc}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/WRFPRS_$dom\.${cc}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${cc}\.txt'
+ endif
+ #sed -i '/wgrib2/c\'"$cmp_line" run_rt.pbs
+ echo $cmp_line >> add.txt
+ #sleep $sleepT
+ #qsub ./run_rt.pbs
+ if($bb == 10)then
+  if($cc >= 6)break
+ @ cc ++
+ else
+ @ cc += 3
+ endif
+ echo $cc
+ end
+ sed -i '/wgrib2/r add.txt' run_rt.pbs
+ endif #if grib
+
  if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA" ||\
      $COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  qsub ./run_mpi.pbs
@@ -259,8 +314,6 @@
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
  ./run_unipostandgrads
  endif
-
- sleep $sleepT
 
  cd ../..
 

@@ -1,0 +1,22 @@
+#!/bin/ksh
+#PBS -N upp_intel 
+#PBS -A P48503002 
+#PBS -l select=1:ncpus=8:mpiprocs=16
+#PBS -j oe
+#PBS -q regular 
+#PBS -l walltime=00:25:00 
+
+echo 'Starting UPP: `date` ' > startupp
+
+./run_unipostandgrads
+
+echo 'End UPP: `date` ' > endupp
+
+if [[ $? == 0 ]]; then
+    qsub ./run_rt.pbs
+fi
+
+exit
+
+
+
