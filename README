@@ -26,10 +26,10 @@ set upppath = "/gpfs/fs1/work/user/UPPV3.2"  # Local path that you want to copy 
 COMPUTER_OPTION = "machine_name" # theia/cheyenne/hydra for now
 3) Set your compiler type: 
 CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
-5) run the shell script
+4) run the shell script
 ./compile.sh
 #note!!! Please check your "targetDir" if you are NOT running this script on Cheyenne/Theia/Hydra !!!
-6) Please enter your vlab/github login and password (for UPP code and CRTM module subset)
+5) Please enter your vlab/github login and password (for UPP code and CRTM module subset)
 Cloning into 'DTC_UPP_github_v6f54859'...
 Username for 'https://github.com': 
 Password for 'https://your_name@github.com': 

@@ -2,10 +2,10 @@
 ###############################################
 #
 # Oirg. Code: Ka Yee Wong (NOAA/GSD) Jun  2017
-# Edit. Code: Ka Yee Wong (NOAA/GSD) Nov  2018
-# Tested on Theia:                   Jan  2019
-# Tested on cheyenne:                Jan  2019
-# Tested on Hydra by Tracy:          Nov  2018
+# Edit. Code: Ka Yee Wong (NOAA/GSD) Feb  2019
+# Tested on Theia:                   Feb  2019
+# Tested on cheyenne:                Feb  2019
+# Tested on Hydra by Tracy:          Feb  2019
 #
 ###############################################
 # Run at background:
@@ -33,7 +33,7 @@ set FILE_NAME = "DTC_UPP_github_crtm"  # Your preferred directory name
 set repository = "https://github.com/NCAR/UPP"
 endif
 set COMPUTER_OPTION = "CHEYENNE" # theia/cheyenne/hydra for now 
-set CONFIG_OPTION = (7 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
+set CONFIG_OPTION = (3 4 7 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
 #set CONFIG_OPTION = (1 2 4 3 7 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
 ###############################################
 ###############################################
@@ -49,6 +49,7 @@ echo 'You are compiling the UPP code on' $COMPUTER_OPTION'.'
 if ($source == 1)then
 rm -rf $FILE_NAME
 #git clone $repository $FILE_NAME
+rm -rf EMC_post
 git clone -b DTC_post --recurse-submodules $repository 
 cp -ra EMC_post/comupp $FILE_NAME
 else if ($source == 2)then
@@ -104,7 +105,7 @@ cp -ra ${FILE_NAME} ${FILE_NAME}_GNU_serial
 cd ${FILE_NAME}_GNU_serial
 pwd
 if ($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
-echo 'Note: No WRF serial GNU bulit on Theia!!'
+echo 'Note: No GNU compiler on Theia!!'
 else if ($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
 module purge
 module load gnu netcdf ncarcompilers
@@ -119,7 +120,7 @@ rm -rf ${FILE_NAME}_GNU_dmpar
 cp -ra ${FILE_NAME} ${FILE_NAME}_GNU_dmpar
 cd ${FILE_NAME}_GNU_dmpar
 if ($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
-echo 'Note: No WRF parallel GNU bulit on Theia!!'
+echo 'Note: No GNU compiler on Theia!!'
 else if ($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
 module purge
 module load gnu mpt netcdf ncarcompilers
@@ -151,8 +152,10 @@ cp -ra ${FILE_NAME} ${FILE_NAME}_PGI_dmpar
 cd ${FILE_NAME}_PGI_dmpar
 if ($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
 module purge
-module load pgi/17.1
-module load mvapich2/2.1rc1
+module load pgi
+#module load pgi/17.1
+module load mvapich2-gdr
+#module load mvapich2/2.1rc1
 module load netcdf/3.6.3
 #set targetDir='/scratch3/BMC/wrf-chem/KaYee/PRECOMPILED_WRF/WRFV3.9_PGI_dmpar_large-file/'
 else if ($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then

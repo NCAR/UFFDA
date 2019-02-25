@@ -1,0 +1,48 @@
+#!/bin/csh
+#
+# -- Request number of cores
+##PBS -l nodes=10:ppn=4
+#PBS -l procs=4
+#
+# -- Specify a maximum wallclock of 1 hours
+#PBS -l walltime=00:10:00
+#
+# -- Specify under which account a job should run
+#PBS -A ap-fc
+#
+# -- Set the name of the job, or moab will default to STDIN
+#PBS -N ap-fc
+#
+#PBS -q batch 
+#
+#PBS -m ae
+#
+# Change directory to the working directory of the job
+# Use the if clause so that this script stays portable
+#
+#if [ x$PBS_O_WORKDIR != x ]; then
+#   cd $PBS_O_WORKDIR
+#fi
+#
+
+echo 'Starting UPP: `date` ' > startupp
+
+cd  /scratch4/BMC/dtc/
+module load impi
+module load wgrib wgrib2/0.2.0.6c
+module load grads
+module load netcdf/3.6.3
+
+./run_unipostandgrads
+
+echo 'End UPP: `date` ' > endupp
+mpirun -np 1 -genvall ./run_rt.pbs
+
+#if [[ $? == 0 ]]; then
+#    qsub ./run_rt.pbs
+#fi
+
+exit
+
+
+
