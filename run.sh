@@ -2,9 +2,10 @@
 ###############################################
 #
 # Oirg. Code: Ka Yee Wong  (NOAA/GSD) Jun  2017
-# Edit. Code: Ka Yee Wong  (NOAA/GSD) Feb  2019
-# Tested on Theia:                    Feb  2019
-# Tested on cheyenne:                 Feb  2019
+# Edit. Code: Ka Yee Wong  (NOAA/GSD) Oct  2019
+# Tested on Hera:                     Oct  2019
+# Tested on Theia:                    Oct  2019
+# Tested on cheyenne:                 Oct  2019
 # Tested on Hydra by Tracy:           Feb  2019
 #
 ###############################################
@@ -21,19 +22,18 @@
 ###############################################
  set FILE_NAME = "DTC_UPP_vlab"   # should match the FILE_NAME from compile.sh
  #set FILE_NAME = "DTC_UPP_github_crtm"   # should match the FILE_NAME from compile.sh
- #set FILE_NAME = "DTC_UPP_local_path_test"
  set outFormat = 'grib2' # 'grib' or 'grib2'
- set RunPath = '/gpfs/fs1/work/kayee/UPP/UFFDA/GITHUB/fv3/' #Set your path for the test case results to be located
+ set RunPath = '/glade/work/kayee/UPP/UFFDA/GITHUB/UFFDA/'
  #set RunPath = '/scratch3/BMC/det/KaYee/UFFDA/' #Set your path for the test case results to be located
  set numR  = 11 # # of test cases
- set COMPUTER_OPTION = "cheyenne" # theia/cheyenne/hydra for now
- set CONFIG_OPTION = (3 4 7 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
+ set COMPUTER_OPTION = "cheyenne" # hera/theia/cheyenne/hydra
+ set CONFIG_OPTION = (1 2 3 4 7 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
  set DataPath = '/gpfs/fs1/p/ral/jntp/UPP/data/wrf2008/'
  set ExtraPath = '/gpfs/fs1/p/ral/jntp/UPP/public/'
  set CNTLPath='/gpfs/fs1/p/ral/jntp/UPP/UFFDA/bench_mark'
- #set DataPath = '/scratch4/BMC/dtc/KaYee/UPP/UPPdata/wrf2008/'
- #set ExtraPath = '/scratch4/BMC/dtc/KaYee/UPP/public/'
- #set CNTLPath='/scratch3/BMC/det/KaYee/UFFDA/bench_mark'
+ #set DataPath = '/scratch1/BMC/dtc/UPP/UPPdata/wrf2008/'
+ #set ExtraPath = '/scratch1/BMC/dtc/UPP/public/'
+ #set CNTLPath='/scratch1/BMC/dtc/UPP/UFFDA/bench_mark'
  #set lastfhr  = 24
  #set sleepT = 5
  #set sleepR = 60
@@ -53,28 +53,23 @@
  cd ${FILE_NAME}_test_cases_Intel_dmpar_${outFormat}
  eval set UPPPath = ${RunPath}\'${FILE_NAME}_Intel_dmpar/\'
  eval set CasesDir = ${RunPath}\'${FILE_NAME}_test_cases_Intel_dmpar_${outFormat}/\'
- eval set postexec = ${UPPPath}\'/bin\'
  echo $CasesDir
- if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
+ if ($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA") then
  module purge
- module load intel/16.1.150
- module load impi
- module load netcdf/3.6.3
+ module load intel/18.0.5.274  impi/2018.0.4  netcdf/4.6.1
  module load grads
- echo 'CONFIG_OPTION IS MPI ' $CONFIG_OPTION[$ii]
- set run_line='"mpirun -np 4  '${postexec}'/unipost.exe'
- sed -i -e "/export/s|RUN_COMMAND=[^ ]*|RUN_COMMAND=$run_line|" run_unipostandgrads
+ else if ($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
+ module purge
+ module load intel/16.1.150 impi/5.1.2.150 netcdf/3.6.3
+ module load grads
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
- module load intel mpt netcdf ncarcompilers
+ module load intel/18.0.5 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
+ #module load intel/17.0.1 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
  #setenv LD_LIBRARY_PATH "${LD_LIBRARY_PATH}:/glade/u/apps/ch/opt/netcdf/4.6.1/intel/17.0.1/lib"
- echo 'CONFIG_OPTION IS MPI ' $CONFIG_OPTION[$ii]
- set run_line='"mpiexec_mpt '${postexec}'/unipost.exe'
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
 # source /home/hertneky/wheezy-intel.csh
 # echo 'Note: No WRF bulit on hydra with Intel!!'
- echo 'CONFIG_OPTION IS MPI ' $CONFIG_OPTION[$ii]
- set run_line='"mpirun -machinefile machfile -np 6 '${postexec}'/unipost.exe'
  endif
  else if($CONFIG_OPTION[$ii] == 3)then
  rm -rf ${FILE_NAME}_test_cases_Intel_serial_${outFormat}
@@ -82,17 +77,19 @@
  cd ${FILE_NAME}_test_cases_Intel_serial_${outFormat}
  eval set UPPPath = ${RunPath}\'${FILE_NAME}_Intel_serial/\'
  eval set CasesDir = ${RunPath}\'${FILE_NAME}_test_cases_Intel_serial_${outFormat}/\'
- eval set postexec = ${UPPPath}\'/bin\'
- set run_line='" '${postexec}'/unipost.exe'
- echo 'CONFIG_OPTION IS SERIAL ' $CONFIG_OPTION[$ii]
- if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
+ if ($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA") then
  module purge
- module load intel/16.1.150
- module load netcdf/3.6.3
+ module load intel/18.0.5.274  impi/2018.0.4  netcdf/4.6.1
+ module load grads
+ else if ($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
+ module purge
+ module load intel/16.1.150 netcdf/3.6.3
  module load grads
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
- module load intel netcdf ncarcompilers
+ module load intel/18.0.5 netcdf/4.6.3 ncarcompilers/0.5.0
+ #module load intel/17.0.1 netcdf/4.6.3 ncarcompilers/0.5.0
+
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
 # source /home/hertneky/wheezy-intel.csh
 #echo 'Note: No WRF bulit on hydra with Intel!!'
@@ -103,17 +100,11 @@
  cd ${FILE_NAME}_test_cases_GNU_serial_${outFormat}
  eval set UPPPath = ${RunPath}\'${FILE_NAME}_GNU_serial/\'
  eval set CasesDir = ${RunPath}\'${FILE_NAME}_test_cases_GNU_serial_${outFormat}/\'
- eval set postexec = ${UPPPath}\'/bin\'
- set run_line='" '${postexec}'/unipost.exe'
- echo 'CONFIG_OPTION IS SERIAL ' $CONFIG_OPTION[$ii]
  if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
-# echo 'Note: No WRF serial GNU bulit on Theia!!'
- module purge
- module load gnu netcdf 
- module load grads
+ echo 'Note: No WRF serial GNU bulit on Theia!!'
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
- module load gnu netcdf ncarcompilers
+ module load gnu/7.4.0 netcdf/4.6.3 ncarcompilers/0.5.0
  module load grads
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
 # source /home/hertneky/wheezy-gf.csh
@@ -124,22 +115,14 @@
  cd ${FILE_NAME}_test_cases_GNU_dmpar_${outFormat}
  eval set UPPPath = ${RunPath}\'${FILE_NAME}_GNU_dmpar/\'
  eval set CasesDir = ${RunPath}\'${FILE_NAME}_test_cases_GNU_dmpar_${outFormat}/\'
- eval set postexec = ${UPPPath}\'/bin\'
- echo 'CONFIG_OPTION IS MPI ' $CONFIG_OPTION[$ii]
  if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
  echo 'Note: No WRF parallel GNU bulit on Theia!!'
- module purge
- module load gnu mpi netcdf 
- module load grads
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
- module load gnu mpt netcdf ncarcompilers
+ module load gnu/7.4.0 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
  module load grads
- module load mpt
- set run_line='"mpiexec_mpt '${postexec}'/unipost.exe'
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
-# source /home/hertneky/wheezy-gf.csh
- set run_line='"mpirun -machinefile machfile -np 6 '${postexec}'/unipost.exe'
+ #source /home/hertneky/wheezy-gf.csh
  endif
  else if($CONFIG_OPTION[$ii] == 2)then
  rm -rf ${FILE_NAME}_test_cases_PGI_dmpar_${outFormat}
@@ -147,24 +130,16 @@
  cd ${FILE_NAME}_test_cases_PGI_dmpar_${outFormat}
  eval set UPPPath = ${RunPath}\'${FILE_NAME}_PGI_dmpar/\'
  eval set CasesDir = ${RunPath}\'${FILE_NAME}_test_cases_PGI_dmpar_${outFormat}/\'
- eval set postexec = ${UPPPath}\'/bin\'
- echo 'CONFIG_OPTION IS MPI ' $CONFIG_OPTION[$ii]
  if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
  module purge
- module load pgi/17.1
- module load mvapich2/2.1rc1
- module load netcdf/3.6.3
+ module load pgi/18.5 netcdf/3.6.3 mvapich2/2.1a
  module load grads
- set run_line='"mpirun -np 4  '${postexec}'/unipost.exe'
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
- module load pgi mpt netcdf ncarcompilers
+ module load pgi/19.3 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
  module load grads
- module load mpt
- set run_line='"mpiexec_mpt '${postexec}'/unipost.exe'
  else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
-# source /home/hertneky/wheezy-pgi.csh
- set run_line='"mpirun -machinefile machfile -np 6 '${postexec}'/unipost.exe'
+ #source /home/hertneky/wheezy-pgi.csh
  endif
  else if($CONFIG_OPTION[$ii] == 1)then
  rm -rf ${FILE_NAME}_test_cases_PGI_serial_${outFormat}
@@ -172,13 +147,9 @@
  cd ${FILE_NAME}_test_cases_PGI_serial_${outFormat}
  eval set UPPPath = ${RunPath}\'${FILE_NAME}_PGI_serial/\'
  eval set CasesDir = ${RunPath}\'${FILE_NAME}_test_cases_PGI_serial_${outFormat}/\'
- eval set postexec = ${UPPPath}\'/bin\'
- set run_line='" '${postexec}'/unipost.exe'
- echo 'CONFIG_OPTION IS SERIAL ' $CONFIG_OPTION[$ii]
  if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
  module purge
- module load pgi/17.1
- module load netcdf/3.6.3
+ module load pgi/18.5 netcdf/3.6.3 mvapich2/2.1a
  module load grads
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
  module purge
@@ -233,8 +204,9 @@
     $COMPUTER_OPTION == "hydra"    || $COMPUTER_OPTION == "HYDRA" ) then
  ln -svf $ExtraPath/wgrib2 .
  ln -svf $ExtraPath/wgrib .  
- else if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
- module load wgrib wgrib2/0.2.0.6c
+ else if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA" ||\
+    $COMPUTER_OPTION == "hera"    || $COMPUTER_OPTION == "HERA" ) then
+ module load wgrib wgrib2/2.0.8
  #cp $ExtraPath/run_mpi.pbs.theia run_mpi.pbs
  #cp $ExtraPath/run_mpi_rt.pbs.theia run_mpi_rt.pbs
  endif
@@ -244,8 +216,6 @@
  eval set DataCase = ${DataPath}\'ps\'${bb}
  echo $DataCase
  set lastfhr  = 18
- set dom = 'd01'
- eval set tag = 'WRFPRS_'${dom}
  if($bb <= 10)then
  set dyncore = 'ARW'
  set inFormat = 'netcdf'
@@ -255,7 +225,8 @@
  #rm postxconfig-NT-WRF.txt
  #ln -svf postxconfig-NT-GFS.txt postxconfig-NT-WRF.txt
  set dyncore = 'FV3'
- set inFormat = 'binarynemsio'
+ set inFormat = 'binarynemsiompiio'
+ #set inFormat = 'binarynemsio'
  set txtCntrlFile = 'postxconfig-NT-GFS.txt'
  endif
  if($bb <= 6)then
@@ -281,8 +252,8 @@
  #endif
  endif
  eval set DOMAINPATH = ${CasesDir}${case}
+ eval set postexec = ${UPPPath}\'/bin\'
  echo $DOMAINPATH
- sed -i -e "/export/s|RUN_COMMAND=[^ ]*|RUN_COMMAND=$run_line|" run_unipostandgrads
  sed -i -e "/export/s|txtCntrlFile=[^ ]*|txtCntrlFile=$UPPPath/parm/$txtCntrlFile|" run_unipostandgrads
  sed -i -e "/export/s|dyncore=[^ ]*|dyncore=$dyncore|" run_unipostandgrads
  sed -i -e "/export/s|inFormat=[^ ]*|inFormat=$inFormat|" run_unipostandgrads
@@ -304,6 +275,35 @@
  #set dom = 'd01'
  endif
 
+ set dom = 'd01'
+
+ if($CONFIG_OPTION[$ii] == 2 || \
+    $CONFIG_OPTION[$ii] == 4 || \
+    $CONFIG_OPTION[$ii] == 8 || \
+    $CONFIG_OPTION[$ii] == 12)then
+ echo 'CONFIG_OPTION IS MPI ' $CONFIG_OPTION[$ii]
+ if($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA")then
+ set run_line='"mpirun -np 4  '${postexec}'/unipost.exe'
+ else if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA")then
+ set run_line='"mpirun -np 4  '${postexec}'/unipost.exe'
+ #sed -i -e "/export/s|RUN_COMMAND=[^ ]*|RUN_COMMAND=$run_line|" run_unipostandgrads
+ else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE")then
+ set run_line='"mpiexec_mpt '${postexec}'/unipost.exe'
+ #sed -i -e "/export/s|RUN_COMMAND=[^ ]*|RUN_COMMAND=$run_line|" run_unipostandgrads
+ else if($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA")then
+ set run_line='"mpirun -machinefile machfile -np 6 '${postexec}'/unipost.exe'
+ endif
+ endif
+
+ if($CONFIG_OPTION[$ii] == 1 || \
+    $CONFIG_OPTION[$ii] == 3 || \
+    $CONFIG_OPTION[$ii] == 7 || \
+    $CONFIG_OPTION[$ii] == 11)then
+ echo 'CONFIG_OPTION IS SERIAL ' $CONFIG_OPTION[$ii]
+ set run_line='"'${postexec}'/unipost.exe'
+ endif
+
+ sed -i -e "/export/s|RUN_COMMAND=[^ ]*|RUN_COMMAND=$run_line|" run_unipostandgrads
  #cp $ExtraPath/run_rt.pbs .
 
  #sleep $sleepT
@@ -338,16 +338,18 @@
  #endif
  set cc = 0
  while ($cc <= 18)
- eval set cmp_line='\.\/wgrib2\ $CNTLCase/CNTL_$tag\.${cc}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/$tag\.${cc}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${cc}\.txt'
- if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA")then
- eval set cmp_line='wgrib2\ $CNTLCase/CNTL_$tag\.${cc}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/$tag\.${cc}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${cc}\.txt'
- endif #COMPUTER_OPTION
- if($cc <= 9)then
+ echo 'cc=' $cc
+ if($cc <= 9 && $bb == 11)then
  eval set ending = \'0\'${cc}
- eval set cmp_line='\.\/wgrib2\ $CNTLCase/CNTL_$tag\.${ending}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/$tag\.${ending}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${ending}\.txt'
- if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA")then
  eval set cmp_line='wgrib2\ $CNTLCase/CNTL_$tag\.${ending}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/$tag\.${ending}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${ending}\.txt'
- endif #if computer_option
+ else if($cc <= 9 && $bb != 11)then
+ eval set ending = \'0\'${cc}
+ eval set cmp_line='wgrib2\ $CNTLCase/CNTL_WRFPRS_$dom\.${ending}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/WRFPRS_$dom\.${ending}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${ending}\.txt'
+ endif
+ if($cc > 9 && $bb == 11)then
+ eval set cmp_line='wgrib2\ $CNTLCase/CNTL_$tag\.${cc}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/$tag\.${cc}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${cc}\.txt'
+ else if($cc > 9 && $bb != 11)then
+ eval set cmp_line='wgrib2\ $CNTLCase/CNTL_WRFPRS_$dom\.${cc}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/WRFPRS_$dom\.${cc}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${cc}\.txt'
  endif
  #sed -i '/wgrib2/c\'"$cmp_line" run_rt.pbs
  echo $cmp_line >> add.txt
@@ -358,15 +360,20 @@
  @ cc ++
  else
  @ cc += 3
- endif #if $bb == 10 || $bb == 11
- end #while loop
+ endif
+ #echo 'cc=' $cc
+ end
  sed -i '/#wgrib2/r add.txt' run_rt.pbs
  endif #if grib
 
- if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA")then
+ if($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA")then
  sed -i 's;^cd .*;cd '"$DOMAINPATH/postprd/"';' run_mpi.pbs
  sed -i 's;^cd .*;cd '"$DOMAINPATH/postprd/"';' run_rt.pbs
- qsub ./run_mpi.pbs
+ sbatch ./run_mpi.pbs
+ else if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA")then
+ sed -i 's;^cd .*;cd '"$DOMAINPATH/postprd/"';' run_mpi.pbs
+ sed -i 's;^cd .*;cd '"$DOMAINPATH/postprd/"';' run_rt.pbs
+ sbatch ./run_mpi.pbs
  #qsub ./run_rt.pbs
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE")then
  qsub ./run_mpi.pbs

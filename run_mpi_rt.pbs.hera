@@ -1,0 +1,55 @@
+#!/bin/csh
+#
+# -- Request number of cores
+#SBATCH --ntasks=4
+#
+# -- Specify a maximum wallclock of 1 hours
+#SBATCH --time=00:20:00
+#
+# -- Specify under which account a job should run
+#SBATCH --account=ap-fc
+#
+#SBATCH -q batch
+#
+# -- Set the name of the job, or moab will default to STDIN
+#SBATCH --output=upp.log
+#
+#SBATCH --partition=hera
+#
+##SBATCH --hint=nomultithread 
+#
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=kayee.wong@noaa.gov
+#
+# Change directory to the working directory of the job
+# Use the if clause so that this script stays portable
+#
+#if [ x$SLURM_SUBMIT_DIR != x ]; then
+#   cd $SLURM_SUBMIT_DIR
+#fi
+echo 'Starting UPP: `date` ' > startupp
+
+cd  /scratch1/BMC/dtc/
+module load intel/18.0.5.274  impi/2018.0.4  netcdf/4.6.1
+module load wgrib  wgrib2/2.0.8
+module load grads
+
+#set FIRST = "./run_unipostandgrads"
+#echo $FIRST
+
+./run_unipostandgrads
+
+echo 'End UPP: `date` ' > endupp
+mpirun -np 1 -genvall ./run_rt.pbs
+
+#if [[ $? == 0 ]]; then
+#echo 'testing testing here5'
+#    qsub ./run_rt.pbs
+#fi
+#echo 'testing testing here6'
+#qsub -W depend=afterok:$FIRST ./run_rt.pbs
+
+exit
+
+
+
