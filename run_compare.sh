@@ -8,6 +8,8 @@ set echo
 # Tested on Theia:                    Oct  2019
 # Tested on cheyenne:                 Oct  2019
 # Tested on Hydra by Tracy:           Feb  2019
+# Modified to compare two test results
+# Mike Kavulich                       Nov  2019
 #
 ###############################################
 # Run at background:
@@ -21,17 +23,18 @@ set echo
 ###############################################
 #!!!!!!!!!!!!!!User Define Here!!!!!!!!!!!!!!!#
 ###############################################
- set FILE_NAME = "DTC_UPP_new_build_system"   # should match the FILE_NAME from compile.sh
- #set FILE_NAME = "DTC_UPP_github_crtm"   # should match the FILE_NAME from compile.sh
+ set FILE_NAME = "DTC_UPP_new_libnames"   # should match the FILE_NAME from compile.sh
+ set FILE_NAME2 = "DTC_UPP_new_build2"
  set outFormat = 'grib2' # 'grib' or 'grib2'
  set RunPath = '/glade/work/kavulich/UPP/UFFDA'
+
  #set RunPath = '/scratch3/BMC/det/KaYee/UFFDA/' #Set your path for the test case results to be located
  set numR  = 11 # # of test cases
  set COMPUTER_OPTION = "cheyenne" # hera/theia/cheyenne/hydra
- set CONFIG_OPTION = (4) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
+ set CONFIG_OPTION = (2 4 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
  set DataPath = '/gpfs/fs1/p/ral/jntp/UPP/data/wrf2008/'
  set ExtraPath = '/gpfs/fs1/p/ral/jntp/UPP/public/'
- set CNTLPath='/gpfs/fs1/p/ral/jntp/UPP/UFFDA/bench_mark'
+ set CNTLPath='/glade/work/kavulich/UPP/UFFDA'
  #set DataPath = '/scratch1/BMC/dtc/UPP/UPPdata/wrf2008/'
  #set ExtraPath = '/scratch1/BMC/dtc/UPP/public/'
  #set CNTLPath='/scratch1/BMC/dtc/UPP/UFFDA/bench_mark'
@@ -54,7 +57,8 @@ set echo
  cd ${FILE_NAME}_test_cases_Intel_dmpar_${outFormat}
  eval set UPPPath = ${RunPath}\'/${FILE_NAME}_Intel_dmpar/\'
  eval set CasesDir = ${RunPath}\'/${FILE_NAME}_test_cases_Intel_dmpar_${outFormat}/\'
- echo $CasesDir
+ eval set CasesDir2 = ${CNTLPath}\'/${FILE_NAME2}_test_cases_Intel_dmpar_${outFormat}/\'
+ echo "Will compare test results in $CasesDir with baseline in $CasesDir2"
  if ($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA") then
  module purge
  module load intel/18.0.5.274  impi/2018.0.4  netcdf/4.6.1
@@ -78,6 +82,8 @@ set echo
  cd ${FILE_NAME}_test_cases_Intel_serial_${outFormat}
  eval set UPPPath = ${RunPath}\'/${FILE_NAME}_Intel_serial/\'
  eval set CasesDir = ${RunPath}\'/${FILE_NAME}_test_cases_Intel_serial_${outFormat}/\'
+ eval set CasesDir2 = ${CNTLPath}\'/${FILE_NAME2}_test_cases_Intel_serial_${outFormat}/\'
+ echo "Will compare test results in $CasesDir with baseline in $CasesDir2"
  if ($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA") then
  module purge
  module load intel/18.0.5.274  impi/2018.0.4  netcdf/4.6.1
@@ -101,6 +107,8 @@ set echo
  cd ${FILE_NAME}_test_cases_GNU_serial_${outFormat}
  eval set UPPPath = ${RunPath}\'/${FILE_NAME}_GNU_serial/\'
  eval set CasesDir = ${RunPath}\'/${FILE_NAME}_test_cases_GNU_serial_${outFormat}/\'
+ eval set CasesDir2 = ${CNTLPath}\'/${FILE_NAME2}_test_cases_GNU_serial_${outFormat}/\'
+ echo "Will compare test results in $CasesDir with baseline in $CasesDir2"
  if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
  echo 'Note: No WRF serial GNU bulit on Theia!!'
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
@@ -116,6 +124,8 @@ set echo
  cd ${FILE_NAME}_test_cases_GNU_dmpar_${outFormat}
  eval set UPPPath = ${RunPath}\'/${FILE_NAME}_GNU_dmpar/\'
  eval set CasesDir = ${RunPath}\'/${FILE_NAME}_test_cases_GNU_dmpar_${outFormat}/\'
+ eval set CasesDir2 = ${CNTLPath}\'/${FILE_NAME2}_test_cases_GNU_dmpar_${outFormat}/\'
+ echo "Will compare test results in $CasesDir with baseline in $CasesDir2"
  if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
  echo 'Note: No WRF parallel GNU bulit on Theia!!'
  else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
@@ -131,6 +141,8 @@ set echo
  cd ${FILE_NAME}_test_cases_PGI_dmpar_${outFormat}
  eval set UPPPath = ${RunPath}\'/${FILE_NAME}_PGI_dmpar/\'
  eval set CasesDir = ${RunPath}\'/${FILE_NAME}_test_cases_PGI_dmpar_${outFormat}/\'
+ eval set CasesDir2 = ${CNTLPath}\'/${FILE_NAME2}_test_cases_PGI_dmpar_${outFormat}/\'
+ echo "Will compare test results in $CasesDir with baseline in $CasesDir2"
  if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
  module purge
  module load pgi/18.5 netcdf/3.6.3 mvapich2/2.1a
@@ -148,6 +160,8 @@ set echo
  cd ${FILE_NAME}_test_cases_PGI_serial_${outFormat}
  eval set UPPPath = ${RunPath}\'/${FILE_NAME}_PGI_serial/\'
  eval set CasesDir = ${RunPath}\'/${FILE_NAME}_test_cases_PGI_serial_${outFormat}/\'
+ eval set CasesDir2 = ${CNTLPath}\'/${FILE_NAME2}_test_cases_PGI_serial_${outFormat}/\'
+ echo "Will compare test results in $CasesDir with baseline in $CasesDir2"
  if($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
  module purge
  module load pgi/18.5 netcdf/3.6.3 mvapich2/2.1a
@@ -253,6 +267,7 @@ set echo
  #endif
  endif
  eval set DOMAINPATH = ${CasesDir}${case}
+ eval set DOMAINPATH2 = ${CasesDir2}${case}
  eval set postexec = ${UPPPath}\'/exec\'
  echo $DOMAINPATH
  sed -i -e "/export/s|txtCntrlFile=[^ ]*|txtCntrlFile=$UPPPath/parm/$txtCntrlFile|" run_unipostandgrads
@@ -318,20 +333,21 @@ set echo
  #ln -svf $ExtraPath/cmp_grib2_grib2.sh .
  cp $ExtraPath/run_rt.pbs .
  if($CONFIG_OPTION[$ii] == 3)then
- eval set CNTLCase = ${CNTLPath}/Intel_serial/\'ps\'${bb}
+ eval set CNTLCase = ${CNTLPath}/${FILE_NAME2}_test_cases_Intel_serial_${outFormat}/\'case\'${bb}/postprd
  else if($CONFIG_OPTION[$ii] == 4)then
- eval set CNTLCase = ${CNTLPath}/Intel_dmpar/\'ps\'${bb}
+ eval set CNTLCase = ${CNTLPath}/${FILE_NAME2}_test_cases_Intel_dmpar_${outFormat}/\'case\'${bb}/postprd
  else if($CONFIG_OPTION[$ii] == 7 || $CONFIG_OPTION[$ii] == 11)then
- eval set CNTLCase = ${CNTLPath}/GNU_serial/\'ps\'${bb}
+ eval set CNTLCase = ${CNTLPath}/${FILE_NAME2}_test_cases_GNU_serial_${outFormat}/\'case\'${bb}
  else if($CONFIG_OPTION[$ii] == 8 || $CONFIG_OPTION[$ii] == 12)then
- eval set CNTLCase = ${CNTLPath}/GNU_dmpar/\'ps\'${bb}
+ eval set CNTLCase = ${CNTLPath}/${FILE_NAME2}_test_cases_GNU_dmpar_${outFormat}/\'case\'${bb}
  else if($CONFIG_OPTION[$ii] == 1)then
- eval set CNTLCase = ${CNTLPath}/PGI_serial/\'ps\'${bb}
+ eval set CNTLCase = ${CNTLPath}/${FILE_NAME2}_test_cases_PGI_serial_${outFormat}/\'case\'${bb}
  else if($CONFIG_OPTION[$ii] == 2)then
- eval set CNTLCase = ${CNTLPath}/PGI_dmpar/\'ps\'${bb}
+ eval set CNTLCase = ${CNTLPath}/${FILE_NAME2}_test_cases_PGI_dmpar_${outFormat}/\'case\'${bb}
  endif
+ echo `pwd`
  echo 'CNTLCase =' $CNTLCase
- ln -svf $CNTLCase/* .
+# ln -svf $CNTLCase/* .
  #if($bb == 10)then
  #sleep $sleepRlong
  #else
@@ -342,15 +358,15 @@ set echo
  echo 'cc=' $cc
  if($cc <= 9 && $bb == 11)then
  eval set ending = \'0\'${cc}
- eval set cmp_line='wgrib2\ $CNTLCase/CNTL_$tag\.${ending}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/$tag\.${ending}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${ending}\.txt'
+ eval set cmp_line='wgrib2\ $DOMAINPATH2/postprd/$tag\.${ending}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/$tag\.${ending}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${ending}\.txt'
  else if($cc <= 9 && $bb != 11)then
  eval set ending = \'0\'${cc}
- eval set cmp_line='wgrib2\ $CNTLCase/CNTL_WRFPRS_$dom\.${ending}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/WRFPRS_$dom\.${ending}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${ending}\.txt'
+ eval set cmp_line='wgrib2\ $DOMAINPATH2/postprd/WRFPRS_$dom\.${ending}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/WRFPRS_$dom\.${ending}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${ending}\.txt'
  endif
  if($cc > 9 && $bb == 11)then
- eval set cmp_line='wgrib2\ $CNTLCase/CNTL_$tag\.${cc}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/$tag\.${cc}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${cc}\.txt'
+ eval set cmp_line='wgrib2\ $DOMAINPATH2/postprd/$tag\.${cc}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/$tag\.${cc}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${cc}\.txt'
  else if($cc > 9 && $bb != 11)then
- eval set cmp_line='wgrib2\ $CNTLCase/CNTL_WRFPRS_$dom\.${cc}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/WRFPRS_$dom\.${cc}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${cc}\.txt'
+ eval set cmp_line='wgrib2\ $DOMAINPATH2/postprd/WRFPRS_$dom\.${cc}\ -var\ -lev\ -rpn\ sto_1\ -import_grib\ $DOMAINPATH/postprd/WRFPRS_$dom\.${cc}\ -rpn\ rcl_1:print_corr:print_rms\ \>\ reg_test\.${cc}\.txt'
  endif
  #sed -i '/wgrib2/c\'"$cmp_line" run_rt.pbs
  echo $cmp_line >> add.txt

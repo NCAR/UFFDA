@@ -28,10 +28,10 @@ set repository = "https://vlab.ncep.noaa.gov/code-review/EMC_post"
 set branch = "dtc_post_v4.0.1"
 #set repository = "https://vlab.ncep.noaa.gov/redmine/projects/emc-post"
 else if ($source == 2)then
-set FILE_NAME = "DTC_UPP_new_build_debugging"  # Your preferred directory name
+set FILE_NAME = "DTC_UPP_new_libnames"  # Your preferred directory name
 #set FILE_NAME = "DTC_UPP_local_path_vlab"  # Your preferred directory name
-set upppath = "/glade/work/kavulich/UPP/UFFDA/EMC_post_new_build_debugging"
-#set upppath = "/scratch1/BMC/dtc/KaYee/UPP/UFFDA/EMC_post/comupp/"  # Local path that you want to copy from (no tar file)
+#set upppath = "/glade/work/kavulich/UPP/new_build_system/EMC_post_DTC_intel"
+set upppath = "/glade/work/kavulich/UPP/new_build_system/EMC_post_DTC"  # Local path that you want to copy from (no tar file)
 #set upppath = "/gpfs/fs1/work/kayee/UPP/CRTM/test_vlab/comupp/"  # Local path that you want to copy from (no tar file)
 else if ($source == 3)then
 set FILE_NAME = "DTC_UPP_new_build_system"  # Your preferred directory name
@@ -40,7 +40,7 @@ set repository = "https://github.com/mkavulich/EMC_post"
 set branch = "DTC_post_unified_build"
 endif
 set COMPUTER_OPTION = "cheyenne" # hera/cheyenne/hydra for now 
-set CONFIG_OPTION = (2 4 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
+set CONFIG_OPTION = (8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
 set DEBUG = 0
 ###############################################
 ###############################################
@@ -72,6 +72,10 @@ cd ../
 else if ($source == 3)then
 #git clone $repository $FILE_NAME
 git clone -b $branch --recurse-submodules $repository $FILE_NAME
+endif
+if ($? != 0)then
+  echo "error cloning repository"
+  exit
 endif
 
 set i = 1
