@@ -26,8 +26,8 @@ if ($source == 1)then
   set repository = "https://vlab.ncep.noaa.gov/code-review/EMC_post"
   set branch = "dtc_post_v4.0.1"
 else if ($source == 2)then
-  set FILE_NAME = "DTC_UPP_new_libnames"  # Your preferred directory name
-  set upppath = "/glade/work/kavulich/UPP/new_build_system/EMC_post_DTC"  # Local path that you want to copy from (no tar file)
+  set FILE_NAME = "DTC_post_nojasper"  # Your preferred directory name
+  set upppath = "/glade/work/kavulich/UPP/UFFDA/EMC_post_mkavulich"  # Local path that you want to copy from (no tar file)
 else if ($source == 3)then
   set FILE_NAME = "DTC_UPP_new_build_system"  # Your preferred directory name
   #set FILE_NAME = "DTC_UPP_github_v6f54859"  # Your preferred directory name
@@ -35,7 +35,7 @@ else if ($source == 3)then
   set branch = "DTC_post_unified_build"
 endif
 set COMPUTER_OPTION = "cheyenne" # hera/cheyenne/hydra for now 
-set CONFIG_OPTION = (8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
+set CONFIG_OPTION = (2 4 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
 set DEBUG = 0
 ###############################################
 ###############################################
@@ -88,12 +88,10 @@ if($CONFIG_OPTION[$i] == 4)then
     module purge
     #module load intel/17.0.1 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
     module load intel/18.0.5 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
-    if (! $?NCEPLIBS_DIR_INTEL || ! $?JASPER_LIB_INTEL || ! $?JASPER_INC_INTEL ) then
-      echo "You need to define NCEPLIBS_DIR_INTEL, JASPER_LIB_INTEL, and JASPER_INC_INTEL environment variables to compile for PGI"
+    if (! $?NCEPLIBS_DIR_INTEL ) then
+      echo "You need to define NCEPLIBS_DIR_INTEL environment variable to compile for INTEL"
     endif
     setenv NCEPLIBS_DIR $NCEPLIBS_DIR_INTEL
-    setenv JASPER_LIB $JASPER_LIB_INTEL
-    setenv JASPER_INC $JASPER_INC_INTEL
     #set targetDir='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_Intel_dmpar_large-file'
   else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
     #source /home/hertneky/wheezy-intel.csh
@@ -142,12 +140,10 @@ else if($CONFIG_OPTION[$i] == 8 || $CONFIG_OPTION[$i] == 12)then
   else if ($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
     module purge
     module load gnu/8.3.0 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
-    if (! $?NCEPLIBS_DIR_GNU || ! $?JASPER_LIB_GNU || ! $?JASPER_INC_GNU ) then
-      echo "You need to define NCEPLIBS_DIR_GNU, JASPER_LIB_GNU, and JASPER_INC_GNU environment variables to compile for PGI"
+    if (! $?NCEPLIBS_DIR_GNU ) then
+      echo "You need to define NCEPLIBS_DIR_GNU environment variable to compile for GNU"
     endif
     setenv NCEPLIBS_DIR $NCEPLIBS_DIR_GNU
-    setenv JASPER_LIB $JASPER_LIB_GNU
-    setenv JASPER_INC $JASPER_INC_GNU
     #set targetDir='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_GNU_dmpar_large-file'
   else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
     source /home/hertneky/wheezy-gf.csh
@@ -188,12 +184,10 @@ else if($CONFIG_OPTION[$i] == 2)then
   else if ($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
     module purge
     module load pgi/19.3 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
-    if (! $?NCEPLIBS_DIR_PGI || ! $?JASPER_LIB_PGI || ! $?JASPER_INC_PGI ) then       
-      echo "You need to define NCEPLIBS_DIR_PGI, JASPER_LIB_PGI, and JASPER_INC_PGI environment variables to compile for PGI"
+    if (! $?NCEPLIBS_DIR_PGI ) then       
+      echo "You need to define NCEPLIBS_DIR_PGI environment variable to compile for PGI"
     endif
     setenv NCEPLIBS_DIR $NCEPLIBS_DIR_PGI
-    setenv JASPER_LIB $JASPER_LIB_PGI
-    setenv JASPER_INC $JASPER_INC_PGI
     #set targetDir='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_PGI_dmpar_large-file'
   else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
     source /home/hertneky/wheezy-pgi.csh
