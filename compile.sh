@@ -224,7 +224,7 @@ endif
 date > StartTime.txt
 ./compile > compile.log 
 date > EndTime.txt
-if (-e bin/copygb.exe && -e bin/ndate.exe && -e bin/unipost.exe) then
+if (-e bin/unipost.exe) then
 cat > ./COMPILE_RESULT << EOF
 All executable files exist
 EOF
