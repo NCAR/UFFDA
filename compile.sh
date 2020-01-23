@@ -20,7 +20,7 @@
 ###############################################
 #!!!!!!!!!!!!!!User Define Here!!!!!!!!!!!!!!!#
 ###############################################
-set source = (2) # 1) source code from vlab 2) source code from local path 3) source code from github
+set source = (3) # 1) source code from vlab 2) source code from local path 3) source code from github
 if ($source == 1)then
   set FILE_NAME = "DTC_UPP_vlab"  # Your preferred directory name
   set repository = "https://vlab.ncep.noaa.gov/code-review/EMC_post"
@@ -31,8 +31,8 @@ else if ($source == 2)then
 else if ($source == 3)then
   set FILE_NAME = "DTC_UPP_new_build_system"  # Your preferred directory name
   #set FILE_NAME = "DTC_UPP_github_v6f54859"  # Your preferred directory name
-  set repository = "https://github.com/mkavulich/EMC_post"
-  set branch = "DTC_post_unified_build"
+  set repository = "https://github.com/NOAA-EMC/EMC_post"
+  set branch = "DTC_post"
 endif
 set COMPUTER_OPTION = "cheyenne" # hera/cheyenne/hydra for now 
 set CONFIG_OPTION = (2 4 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
@@ -89,10 +89,11 @@ if($CONFIG_OPTION[$i] == 4)then
     #module load intel/17.0.1 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
     module load intel/18.0.5 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
     if (! $?NCEPLIBS_DIR_INTEL ) then
-      echo "You need to define NCEPLIBS_DIR_INTEL environment variable to compile for INTEL"
+      setenv NCEPLIBS_DIR /glade/p/ral/jntp/UPP/pre-compiled_libraries/NCEPlibs_intel_18.0.5
+    else
+      setenv NCEPLIBS_DIR $NCEPLIBS_DIR_INTEL
     endif
-    setenv NCEPLIBS_DIR $NCEPLIBS_DIR_INTEL
-    #set targetDir='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_Intel_dmpar_large-file'
+    echo "Will use NCEPLIBS in $NCEPLIBS_DIR for INTEL"
   else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
     #source /home/hertneky/wheezy-intel.csh
     echo 'Note: No WRF bulit on hydra with Intel!!'
@@ -141,10 +142,11 @@ else if($CONFIG_OPTION[$i] == 8 || $CONFIG_OPTION[$i] == 12)then
     module purge
     module load gnu/8.3.0 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
     if (! $?NCEPLIBS_DIR_GNU ) then
-      echo "You need to define NCEPLIBS_DIR_GNU environment variable to compile for GNU"
+      setenv NCEPLIBS_DIR /glade/p/ral/jntp/UPP/pre-compiled_libraries/NCEPlibs_gnu_8.3.0
+    else
+      setenv NCEPLIBS_DIR $NCEPLIBS_DIR_GNU
     endif
-    setenv NCEPLIBS_DIR $NCEPLIBS_DIR_GNU
-    #set targetDir='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_GNU_dmpar_large-file'
+    echo "Will use NCEPLIBS in $NCEPLIBS_DIR for GNU"
   else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
     source /home/hertneky/wheezy-gf.csh
     #set targetDir='/d1/hertneky/wtf_upp/Builds/WRFV3.7.1.34/em_real/WRFV3'
@@ -184,11 +186,12 @@ else if($CONFIG_OPTION[$i] == 2)then
   else if ($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
     module purge
     module load pgi/19.3 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
-    if (! $?NCEPLIBS_DIR_PGI ) then       
-      echo "You need to define NCEPLIBS_DIR_PGI environment variable to compile for PGI"
+    if (! $?NCEPLIBS_DIR_PGI ) then
+      setenv NCEPLIBS_DIR /glade/p/ral/jntp/UPP/pre-compiled_libraries/NCEPlibs_pgi_19.3
+    else
+      setenv NCEPLIBS_DIR $NCEPLIBS_DIR_PGI
     endif
-    setenv NCEPLIBS_DIR $NCEPLIBS_DIR_PGI
-    #set targetDir='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_PGI_dmpar_large-file'
+    echo "Will use NCEPLIBS in $NCEPLIBS_DIR for PGI"
   else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
     source /home/hertneky/wheezy-pgi.csh
     #set targetDir='/d1/hertneky/wtf_upp/Builds/WRFV3.7.1.3/em_real/WRFV3'
