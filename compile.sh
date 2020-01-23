@@ -222,7 +222,7 @@ if ($COMPUTER_OPTION == "theia" || $COMPUTER_OPTION == "THEIA") then
 endif
 
 date > StartTime.txt
-./compile > compile.log 
+./compile >& compile.log 
 date > EndTime.txt
 if (-e bin/unipost.exe) then
 cat > ./COMPILE_RESULT << EOF
