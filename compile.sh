@@ -6,7 +6,7 @@
 # Tested on Hera:                    Oct  2019
 # Tested on Theia:                   Oct  2019
 # Tested on cheyenne:                Oct  2019
-# Tested on Hydra by Tracy:          Feb  2019
+# Tested on puffling by Tracy:       Feb  2019
 #
 ###############################################
 # Run at background:
@@ -29,13 +29,13 @@ else if ($source == 2)then
   set FILE_NAME = "DTC_post_nojasper"  # Your preferred directory name
   set upppath = "/glade/work/kavulich/UPP/UFFDA/EMC_post_mkavulich"  # Local path that you want to copy from (no tar file)
 else if ($source == 3)then
-  set FILE_NAME = "DTC_UPP_new_build_system"  # Your preferred directory name
+  set FILE_NAME = "DTC_post_v4.1beta"  # Your preferred directory name
   #set FILE_NAME = "DTC_UPP_github_v6f54859"  # Your preferred directory name
   set repository = "https://github.com/NOAA-EMC/EMC_post"
   set branch = "DTC_post"
 endif
-set COMPUTER_OPTION = "cheyenne" # hera/cheyenne/hydra for now 
-set CONFIG_OPTION = (2 4 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
+set COMPUTER_OPTION = "puffling" # hera/cheyenne/puffling for now 
+set CONFIG_OPTION = (8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar)
 set DEBUG = 0
 ###############################################
 ###############################################
@@ -94,9 +94,8 @@ if($CONFIG_OPTION[$i] == 4)then
       setenv NCEPLIBS_DIR $NCEPLIBS_DIR_INTEL
     endif
     echo "Will use NCEPLIBS in $NCEPLIBS_DIR for INTEL"
-  else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
-    #source /home/hertneky/wheezy-intel.csh
-    echo 'Note: No WRF bulit on hydra with Intel!!'
+  else if ($COMPUTER_OPTION == "puffling" || $COMPUTER_OPTION == "PUFFLING") then
+    echo 'Note: No Intel on puffling!'
   endif
 else if($CONFIG_OPTION[$i] == 3)then
   rm -rf ${FILE_NAME}_Intel_serial
@@ -114,9 +113,8 @@ else if($CONFIG_OPTION[$i] == 3)then
     module load intel/18.0.5 netcdf/4.6.3 ncarcompilers/0.5.0
     #module load intel/17.0.1 netcdf/4.6.3 ncarcompilers/0.5.0
     #set targetDir='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_Intel_serial_large-file'
-  else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
-    #source /home/hertneky/wheezy-intel.csh
-    echo 'Note: No WRF bulit on hydra with Intel!!'
+  else if ($COMPUTER_OPTION == "puffling" || $COMPUTER_OPTION == "PUFFLING") then
+    echo 'Note: No Intel on puffling!'
   endif
 else if($CONFIG_OPTION[$i] == 7 || $CONFIG_OPTION[$i] == 11)then
   rm -rf ${FILE_NAME}_GNU_serial
@@ -128,8 +126,8 @@ else if($CONFIG_OPTION[$i] == 7 || $CONFIG_OPTION[$i] == 11)then
     module purge
     module load gnu/8.3.0 netcdf/4.6.3 ncarcompilers/0.5.0 
     #set targetDir='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_GNU_serial_large-file'
-  else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
-    source /home/hertneky/wheezy-gf.csh
+  else if ($COMPUTER_OPTION == "puffling" || $COMPUTER_OPTION == "PUFFLING") then
+    #source /home/hertneky/wheezy-gf.csh
     #set targetDir='/d1/hertneky/wtf_upp/Builds/WRFV3.7.1.32/em_real/WRFV3'
   endif
 else if($CONFIG_OPTION[$i] == 8 || $CONFIG_OPTION[$i] == 12)then
@@ -147,9 +145,10 @@ else if($CONFIG_OPTION[$i] == 8 || $CONFIG_OPTION[$i] == 12)then
       setenv NCEPLIBS_DIR $NCEPLIBS_DIR_GNU
     endif
     echo "Will use NCEPLIBS in $NCEPLIBS_DIR for GNU"
-  else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
-    source /home/hertneky/wheezy-gf.csh
+  else if ($COMPUTER_OPTION == "puffling" || $COMPUTER_OPTION == "PUFFLING") then
+    #source /home/hertneky/wheezy-gf.csh
     #set targetDir='/d1/hertneky/wtf_upp/Builds/WRFV3.7.1.34/em_real/WRFV3'
+    setenv NCEPLIBS_DIR /d1/hertneky/upp/NCEPlibs
   endif
 else if($CONFIG_OPTION[$i] == 1)then
   rm -rf ${FILE_NAME}_PGI_serial
@@ -167,9 +166,8 @@ else if($CONFIG_OPTION[$i] == 1)then
     module purge
     module load pgi/19.3 netcdf/4.6.3 ncarcompilers/0.5.0 
     #set targetDir='/gpfs/fs1/p/ral/jntp/UPP/PRE_COMPILED_CODE/WRFV3.9_PGI_serial_large-file'
-  else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
-    source /home/hertneky/wheezy-pgi.csh
-    #set targetDir='/d1/hertneky/wtf_upp/Builds/WRFV3.7.1.1/em_real/WRFV3'
+  else if ($COMPUTER_OPTION == "puffling" || $COMPUTER_OPTION == "PUFFLING") then
+    echo 'Note: No PGI on puffling!'
   endif
 else if($CONFIG_OPTION[$i] == 2)then
   rm -rf ${FILE_NAME}_PGI_dmpar
@@ -192,9 +190,8 @@ else if($CONFIG_OPTION[$i] == 2)then
       setenv NCEPLIBS_DIR $NCEPLIBS_DIR_PGI
     endif
     echo "Will use NCEPLIBS in $NCEPLIBS_DIR for PGI"
-  else if ($COMPUTER_OPTION == "hydra" || $COMPUTER_OPTION == "HYDRA") then
-    source /home/hertneky/wheezy-pgi.csh
-    #set targetDir='/d1/hertneky/wtf_upp/Builds/WRFV3.7.1.3/em_real/WRFV3'
+  else if ($COMPUTER_OPTION == "puffling" || $COMPUTER_OPTION == "PUFFLING") then
+    echo 'Note: No PGI on puffling!'
   endif
 endif
 #setenv WRF_DIR $targetDir
