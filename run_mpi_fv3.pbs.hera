@@ -2,7 +2,7 @@
 #
 # -- Request number of cores
 ##SBATCH --ntasks=12
-#SBATCH -N 4 --ntasks-per-node=12
+#SBATCH -N 8 --ntasks-per-node=12
 #
 # -- Specify a maximum wallclock of 1 hours
 #SBATCH --time=01:00:00

@@ -2,7 +2,7 @@
 #PBS -N upp_intel 
 #PBS -A P48503002 
 #PBS -j oe
-#PBS -l select=1:ncpus=8:mpiprocs=16
+#PBS -l select=8:mpiprocs=12:ompthreads=1
 #PBS -q regular 
 #PBS -l walltime=00:40:00 
 
