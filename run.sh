@@ -28,10 +28,10 @@ set echo
  #set RunPath = '/scratch3/BMC/det/KaYee/UFFDA/' #Set your path for the test case results to be located
  set numR  = 12 # # of test cases
  set COMPUTER_OPTION = "cheyenne" # hera/cheyenne/puffling
- set CONFIG_OPTION = (4) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 
+ set CONFIG_OPTION = (4 2 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 
  set DataPath = '/gpfs/fs1/p/ral/jntp/UPP/data/wrf2008/' # settings on Cheyenne
- set ExtraPath = '/glade/work/kayee/UPP/UFFDA/GITHUB/git_push/UFFDA'
- #set ExtraPath = '/gpfs/fs1/p/ral/jntp/UPP/public/'
+ #set ExtraPath = '/glade/work/kayee/UPP/UFFDA/GITHUB/git_push/UFFDA'
+ set ExtraPath = '/gpfs/fs1/p/ral/jntp/UPP/public/'
  set CNTLPath='/gpfs/fs1/p/ral/jntp/UPP/UFFDA/bench_mark'
  #set DataPath = '/scratch1/BMC/dtc/UPP/UPPdata/wrf2008/' # settings on Hera
  #set ExtraPath = '/scratch2/BMC/det/KaYee/UPP/UFFDA/tmp'

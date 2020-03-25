@@ -20,20 +20,25 @@ i) Set your directory name(e.g. DTC_UPP_github_v6f54859):
 FILE_NAME = "your_preferred_directory_name"
 ii) Set the UPP vlab/github path:
 repository = "your_github_path"
+set branch = "release_tag"
 Or set the local UPP path:
 set upppath = "/gpfs/fs1/work/user/UPPV3.2"  # Local path that you want to copy from (no tar file)
 2) Set the machine name: 
-COMPUTER_OPTION = "machine_name" # theia/cheyenne/hydra for now
+COMPUTER_OPTION = "machine_name" # hera/cheyenne/hydra for now
 3) Set your compiler type: 
-CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 11)GNU(serial) on Hydra 12)GNU(dmpar) on Hydra
+CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar)
 4) run the shell script
 ./compile.sh
 #note!!! Please check your "targetDir" if you are NOT running this script on Cheyenne/Theia/Hydra !!!
-5) Please enter your vlab/github login and password (for UPP code and CRTM module subset)
-Cloning into 'DTC_UPP_github_v6f54859'...
+5) Please enter your vlab/github login and password 
+Cloning into 'UFFDA'...
 Username for 'https://github.com': 
 Password for 'https://your_name@github.com': 
-Cloning into 'src/lib/crtm2'...
+remote: Enumerating objects: 37, done.
+remote: Counting objects: 100% (37/37), done.
+remote: Compressing objects: 100% (25/25), done.
+remote: Total 94 (delta 23), reused 22 (delta 12), pack-reused 57
+Unpacking objects: 100% (94/94), done.
 
 #  Run test cases with run.sh
 How to run run.sh?
@@ -46,14 +51,15 @@ RunPath = 'your_working_directory_path'
 4) Set the number of test cases (10 cases max)
 numR  = 10 
 5) Set the machine name: 
-COMPUTER_OPTION = "machine_name" # theia/cheyenne/hydra for now
+COMPUTER_OPTION = "machine_name" # hera/cheyenne/hydra for now
 6) Set your compiler type: 
 CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 4)Intel(dmpar) 3)Intel(serial) 7)GNU(serial) 8)GNU(dmpar)
 7) Set test case data path
 DataPath = 'your_data_path'
-8)Set the path for the extra files # including the wgrib or/and wgrib2
+8)Set the path for the extra files # where the *.pbs *.pl files located including the wgrib or/and wgrib2
 ExtraPath = 'your_path'
 9)Set the path for the bench mark files #for the regression test      
 10) run the shell script
-qsub ./run.pbs
+qsub ./run.sh   # on cheyenne
+sbatch run.slurm # on hera
 # Please check your "DataPath", "ExtraPath" and "CNTLPath" if you are NOT running this script on Cheyenne/Theia/Hydra.
