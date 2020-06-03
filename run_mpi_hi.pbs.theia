@@ -33,7 +33,7 @@ module load wgrib wgrib2/0.2.0.6c
 module load grads
 module load netcdf/3.6.3
 
-./run_unipostandgrads
+./run_unipost
 
 echo 'End UPP: `date` ' > endupp
 

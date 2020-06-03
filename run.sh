@@ -210,7 +210,7 @@ set echo
        else        
          set flag=""
        endif
-       cp $UPPPath/scripts/run_unipostandgrads .
+       cp $UPPPath/scripts/run_unipost .
        ln -svf $ExtraPath/run_mpi.pbs$flag run_mpi.pbs
        ln -svf $ExtraPath/run_mpi_rt.pbs$flag run_mpi_rt.pbs
        eval set DataCase = ${DataPath}\'ps\'${bb}
@@ -278,22 +278,22 @@ set echo
        eval set DOMAINPATH = ${CasesDir}${case}
        eval set postexec = ${UPPPath}\'/exec\'
        echo $DOMAINPATH
-       sed -i -e "/export/s|txtCntrlFile=[^ ]*|txtCntrlFile=$UPPPath/parm/$txtCntrlFile|" run_unipostandgrads
-       sed -i -e "/export/s|dyncore=[^ ]*|dyncore=$dyncore|" run_unipostandgrads
-       sed -i -e "/export/s|inFormat=[^ ]*|inFormat=$inFormat|" run_unipostandgrads
-       sed -i -e "/export/s|outFormat=[^ ]*|outFormat=$outFormat|" run_unipostandgrads
-       sed -i -e "/export/s|TOP_DIR=[^ ]*|TOP_DIR=$RunPath|" run_unipostandgrads
-       sed -i -e "/export/s|DOMAINPATH=[^ ]*|DOMAINPATH=$DOMAINPATH|" run_unipostandgrads
-       sed -i -e "/export/s|UNIPOST_HOME=[^ ]*|UNIPOST_HOME=$UPPPath|" run_unipostandgrads
-       sed -i -e "/export/s|POSTEXEC=[^ ]*|POSTEXEC=$postexec|" run_unipostandgrads
-       sed -i -e "/export/s|modelDataPath=[^ ]*|modelDataPath=$DataCase|" run_unipostandgrads
-       sed -i -e "/export/s|startdate=[^ ]*|startdate=$startdate|" run_unipostandgrads
-       sed -i -e "/export/s|lastfhr=[^ ]*|lastfhr=$lastfhr|" run_unipostandgrads
+       sed -i -e "/export/s|txtCntrlFile=[^ ]*|txtCntrlFile=$UPPPath/parm/$txtCntrlFile|" run_unipost
+       sed -i -e "/export/s|dyncore=[^ ]*|dyncore=$dyncore|" run_unipost
+       sed -i -e "/export/s|inFormat=[^ ]*|inFormat=$inFormat|" run_unipost
+       sed -i -e "/export/s|outFormat=[^ ]*|outFormat=$outFormat|" run_unipost
+       sed -i -e "/export/s|TOP_DIR=[^ ]*|TOP_DIR=$RunPath|" run_unipost
+       sed -i -e "/export/s|DOMAINPATH=[^ ]*|DOMAINPATH=$DOMAINPATH|" run_unipost
+       sed -i -e "/export/s|UNIPOST_HOME=[^ ]*|UNIPOST_HOME=$UPPPath|" run_unipost
+       sed -i -e "/export/s|POSTEXEC=[^ ]*|POSTEXEC=$postexec|" run_unipost
+       sed -i -e "/export/s|modelDataPath=[^ ]*|modelDataPath=$DataCase|" run_unipost
+       sed -i -e "/export/s|startdate=[^ ]*|startdate=$startdate|" run_unipost
+       sed -i -e "/export/s|lastfhr=[^ ]*|lastfhr=$lastfhr|" run_unipost
        if($bb == 10 || $bb == 11)then
          #set domain_list = 'd02'
          set incrementhr = '01'
-         #sed -i -e "/export/s|domain_list=[^ ]*|domain_list=$domain_list|" run_unipostandgrads
-         sed -i -e "/export/s|incrementhr=[^ ]*|incrementhr=$incrementhr|" run_unipostandgrads
+         #sed -i -e "/export/s|domain_list=[^ ]*|domain_list=$domain_list|" run_unipost
+         sed -i -e "/export/s|incrementhr=[^ ]*|incrementhr=$incrementhr|" run_unipost
          #set dom = 'd02'
          #else
          #set dom = 'd01'
@@ -330,7 +330,7 @@ set echo
          set run_line='"'${postexec}'/unipost.exe'
        endif
       
-       sed -i -e "/export/s|RUN_COMMAND=[^ ]*|RUN_COMMAND=$run_line|" run_unipostandgrads
+       sed -i -e "/export/s|RUN_COMMAND=[^ ]*|RUN_COMMAND=$run_line|" run_unipost
        #cp $ExtraPath/run_rt.pbs .
       
        #sleep $sleepT
@@ -406,7 +406,7 @@ set echo
          qsub ./run_mpi.pbs
          echo 'submit jobs'
        else if($COMPUTER_OPTION == "puffling" || $COMPUTER_OPTION == "PUFFLING")then
-         ./run_unipostandgrads
+         ./run_unipost
        endif
   
        cd ../..

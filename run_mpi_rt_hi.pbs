@@ -8,7 +8,7 @@
 
 echo 'Starting UPP: `date` ' > startupp
 
-./run_unipostandgrads
+./run_unipost
 
 echo 'End UPP: `date` ' > endupp
 
