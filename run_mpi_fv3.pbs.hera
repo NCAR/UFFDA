@@ -5,7 +5,8 @@
 #SBATCH -N 8 --ntasks-per-node=12
 #
 # -- Specify a maximum wallclock of 1 hours
-#SBATCH --time=01:00:00
+#SBATCH --time=00:20:00
+##SBATCH --time=01:00:00
 #
 # -- Specify under which account a job should run
 #SBATCH --account=ap-fc
@@ -35,13 +36,13 @@ module load intel/18.0.5.274  impi/2018.0.4  netcdf/4.7.0
 module load wgrib  wgrib2/2.0.8
 module load grads
 
-#set FIRST = "./run_unipost"
+#set FIRST = "./run_upp"
 #echo $FIRST
 
-./run_unipost
+./run_upp
 
 echo 'End UPP: `date` ' > endupp
-mpirun -np 1 -genvall ./run_rt.pbs.hera
+mpirun -np 1 -genvall ./run_rt.pbs
 
 #if [[ $? == 0 ]]; then
 #    qsub ./run_rt.pbs

@@ -20,23 +20,22 @@ set echo
 ###############################################
 #!!!!!!!!!!!!!!User Define Here!!!!!!!!!!!!!!!#
 ###############################################
- set FILE_NAME = "v4.1.0.beta02"   # should match the FILE_NAME from compile.sh
+ set FILE_NAME = "v9.0.0"   # should match the FILE_NAME from compile.sh
  #set FILE_NAME = "DTC_UPP_github_crtm"   # should match the FILE_NAME from compile.sh
  set outFormat = 'grib2' # 'grib' or 'grib2'
- #set RunPath = '/scratch2/BMC/det/KaYee/UPP/UFFDA/tmp'
- set RunPath = '/glade/work/kayee/UPP/UFFDA/GITHUB/git_push/UFFDA'
+ set RunPath = '/glade/scratch/kayee/UPP/UFFDA/UPPv9.0.0'
+ #set RunPath = '/scratch2/BMC/det/KaYee/UPP/UFFDA/UPP_v9.0.0'
  #set RunPath = '/scratch3/BMC/det/KaYee/UFFDA/' #Set your path for the test case results to be located
  set numR  = 12 # # of test cases
  set COMPUTER_OPTION = "cheyenne" # hera/cheyenne/puffling
- set CONFIG_OPTION = (4 2 8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 
+ set CONFIG_OPTION = (8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar) 
  set DataPath = '/gpfs/fs1/p/ral/jntp/UPP/data/wrf2008/' # settings on Cheyenne
- #set ExtraPath = '/glade/work/kayee/UPP/UFFDA/GITHUB/git_push/UFFDA'
- set ExtraPath = '/gpfs/fs1/p/ral/jntp/UPP/public/'
+ set ExtraPath = '/glade/work/kayee/UPP/UFFDA_old/GITHUB/git_push/UFFDA'
+ #set ExtraPath = '/gpfs/fs1/p/ral/jntp/UPP/public/'
  set CNTLPath='/gpfs/fs1/p/ral/jntp/UPP/UFFDA/bench_mark'
- #set DataPath = '/scratch1/BMC/dtc/UPP/UPPdata/wrf2008/' # settings on Hera
- #set ExtraPath = '/scratch2/BMC/det/KaYee/UPP/UFFDA/tmp'
- ##set ExtraPath = '/scratch1/BMC/dtc/UPP/public/'
- #set CNTLPath='/scratch1/BMC/dtc/UPP/UFFDA/bench_mark'
+# set DataPath = '/scratch1/BMC/dtc/UPP/UPPdata/wrf2008/' # settings on Hera
+# set ExtraPath = '/scratch1/BMC/dtc/UPP/public/'
+# set CNTLPath='/scratch1/BMC/dtc/UPP/UFFDA/bench_mark'
  #set DataPath = '/d1/hertneky/upp/data/' # settings on puffling
  #set ExtraPath = $DataPath
  #set CNTLPath=$DataPath/benchmark
@@ -62,11 +61,13 @@ set echo
      echo $CasesDir
      if ($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA") then
        module purge
-       module load intel/18.0.5.274  impi/2018.0.4  netcdf/4.7.0
+       module load intel/18.0.5.274  impi/2018.0.4  cmake/3.16.1
+       #module load intel/18.0.5.274  impi/2018.0.4  netcdf/4.7.0
        module load grads
      else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
        module purge
-       module load intel/18.0.5 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
+       module load gnu/9.1.0 cmake/3.16.4 mpt/2.19
+#       module load intel/18.0.5 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
        #module load intel/17.0.1 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
        #setenv LD_LIBRARY_PATH "${LD_LIBRARY_PATH}:/glade/u/apps/ch/opt/netcdf/4.6.1/intel/17.0.1/lib"
      else if($COMPUTER_OPTION == "puffling" || $COMPUTER_OPTION == "PUFFLING") then
@@ -114,7 +115,8 @@ set echo
        echo 'Note: No parallel GNU bulit on Hera!!'
      else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
        module purge
-       module load gnu/8.3.0 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
+#       module load gnu/8.3.0 mpt/2.19 netcdf-mpi/4.6.3 ncarcompilers/0.5.0 pnetcdf/1.11.1
+       module load gnu/9.1.0 cmake/3.16.4 mpt/2.19
        module load grads
      else if($COMPUTER_OPTION == "puffling" || $COMPUTER_OPTION == "PUFFLING") then
        #source /home/hertneky/wheezy-gf.csh
@@ -210,7 +212,7 @@ set echo
        else        
          set flag=""
        endif
-       cp $UPPPath/scripts/run_unipost .
+       cp $UPPPath/scripts/run_upp .
        ln -svf $ExtraPath/run_mpi.pbs$flag run_mpi.pbs
        ln -svf $ExtraPath/run_mpi_rt.pbs$flag run_mpi_rt.pbs
        eval set DataCase = ${DataPath}\'ps\'${bb}
@@ -276,24 +278,24 @@ set echo
          ln -svf $UPPPath/parm/params_grib2_tbl_new .
        endif
        eval set DOMAINPATH = ${CasesDir}${case}
-       eval set postexec = ${UPPPath}\'/exec\'
+       eval set postexec = ${UPPPath}\'/bin\'
        echo $DOMAINPATH
-       sed -i -e "/export/s|txtCntrlFile=[^ ]*|txtCntrlFile=$UPPPath/parm/$txtCntrlFile|" run_unipost
-       sed -i -e "/export/s|dyncore=[^ ]*|dyncore=$dyncore|" run_unipost
-       sed -i -e "/export/s|inFormat=[^ ]*|inFormat=$inFormat|" run_unipost
-       sed -i -e "/export/s|outFormat=[^ ]*|outFormat=$outFormat|" run_unipost
-       sed -i -e "/export/s|TOP_DIR=[^ ]*|TOP_DIR=$RunPath|" run_unipost
-       sed -i -e "/export/s|DOMAINPATH=[^ ]*|DOMAINPATH=$DOMAINPATH|" run_unipost
-       sed -i -e "/export/s|UNIPOST_HOME=[^ ]*|UNIPOST_HOME=$UPPPath|" run_unipost
-       sed -i -e "/export/s|POSTEXEC=[^ ]*|POSTEXEC=$postexec|" run_unipost
-       sed -i -e "/export/s|modelDataPath=[^ ]*|modelDataPath=$DataCase|" run_unipost
-       sed -i -e "/export/s|startdate=[^ ]*|startdate=$startdate|" run_unipost
-       sed -i -e "/export/s|lastfhr=[^ ]*|lastfhr=$lastfhr|" run_unipost
+       sed -i -e "/export/s|txtCntrlFile=[^ ]*|txtCntrlFile=$UPPPath/parm/$txtCntrlFile|" run_upp
+       sed -i -e "/export/s|dyncore=[^ ]*|dyncore=$dyncore|" run_upp
+       sed -i -e "/export/s|inFormat=[^ ]*|inFormat=$inFormat|" run_upp
+       sed -i -e "/export/s|outFormat=[^ ]*|outFormat=$outFormat|" run_upp
+       sed -i -e "/export/s|TOP_DIR=[^ ]*|TOP_DIR=$RunPath|" run_upp
+       sed -i -e "/export/s|DOMAINPATH=[^ ]*|DOMAINPATH=$DOMAINPATH|" run_upp
+       sed -i -e "/export/s|UNIPOST_HOME=[^ ]*|UNIPOST_HOME=$UPPPath|" run_upp
+       sed -i -e "/export/s|POSTEXEC=[^ ]*|POSTEXEC=$postexec|" run_upp
+       sed -i -e "/export/s|modelDataPath=[^ ]*|modelDataPath=$DataCase|" run_upp
+       sed -i -e "/export/s|startdate=[^ ]*|startdate=$startdate|" run_upp
+       sed -i -e "/export/s|lastfhr=[^ ]*|lastfhr=$lastfhr|" run_upp
        if($bb == 10 || $bb == 11)then
          #set domain_list = 'd02'
          set incrementhr = '01'
-         #sed -i -e "/export/s|domain_list=[^ ]*|domain_list=$domain_list|" run_unipost
-         sed -i -e "/export/s|incrementhr=[^ ]*|incrementhr=$incrementhr|" run_unipost
+         #sed -i -e "/export/s|domain_list=[^ ]*|domain_list=$domain_list|" run_upp
+         sed -i -e "/export/s|incrementhr=[^ ]*|incrementhr=$incrementhr|" run_upp
          #set dom = 'd02'
          #else
          #set dom = 'd01'
@@ -313,12 +315,12 @@ set echo
           $CONFIG_OPTION[$ii] == 12)then
          echo 'CONFIG_OPTION IS MPI ' $CONFIG_OPTION[$ii]
          if($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA")then
-           set run_line='"mpirun '${postexec}'/unipost.exe'
+           set run_line='"mpirun '${postexec}'/ncep_post'
          else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE")then
-           set run_line='"mpirun '${postexec}'/unipost.exe'
+           set run_line='"mpirun '${postexec}'/ncep_post'
          else if($COMPUTER_OPTION == "puffling" || $COMPUTER_OPTION == "PUFFLING")then
            ln -sf /d1/hertneky/upp/data/machfile .
-           set run_line='"mpirun -machinefile machfile -np 4 '${postexec}'/unipost.exe'
+           set run_line='"mpirun -machinefile machfile -np 4 '${postexec}'/ncep_post'
          endif
        endif
       
@@ -327,10 +329,10 @@ set echo
           $CONFIG_OPTION[$ii] == 7 || \
           $CONFIG_OPTION[$ii] == 11)then
          echo 'CONFIG_OPTION IS SERIAL ' $CONFIG_OPTION[$ii]
-         set run_line='"'${postexec}'/unipost.exe'
+         set run_line='"'${postexec}'/ncep_post'
        endif
       
-       sed -i -e "/export/s|RUN_COMMAND=[^ ]*|RUN_COMMAND=$run_line|" run_unipost
+       sed -i -e "/export/s|RUN_COMMAND=[^ ]*|RUN_COMMAND=$run_line|" run_upp
        #cp $ExtraPath/run_rt.pbs .
       
        #sleep $sleepT
@@ -406,7 +408,7 @@ set echo
          qsub ./run_mpi.pbs
          echo 'submit jobs'
        else if($COMPUTER_OPTION == "puffling" || $COMPUTER_OPTION == "PUFFLING")then
-         ./run_unipost
+         ./run_upp
        endif
   
        cd ../..
