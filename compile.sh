@@ -3,42 +3,32 @@
 #
 # Oirg. Code: Ka Yee Wong (NOAA/GSD) Jun  2017
 # Edit. Code: Ka Yee Wong (NOAA/GSD) Oct  2020
-# Tested on Hera:                    Mar  2020
-# Tested on cheyenne:                Mar  2020
-# Tested on puffling by Tracy(NCAR): Mar  2020
+# Edit. Code: Ka Yee Wong (NOAA/GSD) Apr  2021
+# Tested on Hera:                    Apr  2021
+# Tested on cheyenne:                Apr  2021
 #
 ###############################################
-# Run at background:
-# # > compile.csh > & cshout &
+# Run script
+# # > ./compile.sh
 # # Want to terminate/kill the job:
-# # > jobs
-# # > kill %1
-# # or
-# # > ps
-# # > kill -9 PID
+# # > qstat -u username
+# # > qdel job ID
 ###############################################
 #!!!!!!!!!!!!!!User Define Here!!!!!!!!!!!!!!!#
 ###############################################
-set source = (2) # 1) source code from vlab 2) source code from local path 3) source code from github
+set source = (1) # 1) source code from github 2) source code from local path 
 if ($source == 1)then
-  set FILE_NAME = "DTC_UPP_vlab"  # Your preferred directory name
-  set repository = "https://vlab.ncep.noaa.gov/code-review/EMC_post"
-  set branch = "dtc_post_v4.0.1"
-else if ($source == 2)then
-  set FILE_NAME = "v9.0.0"  # Your preferred directory name
-  set upppath = "/glade/scratch/kayee/UPP/UFFDA/UPPv9.0.0/EMC_post"
-  #set upppath = "/glade/scratch/kayee/UPP/UFFDA/DTC_post_v4.1_ps12/DTC_post_v4.1/"  # Local path that you want to copy from (no tar file)
-  #set upppath = "/glade/work/kavulich/UPP/UFFDA/EMC_post_mkavulich"  # Local path that you want to copy from (no tar file)
-else if ($source == 3)then
-  set FILE_NAME = "v9.0.0"  # Your preferred directory name
-  #set FILE_NAME = "DTC_UPP_github_v6f54859"  # Your preferred directory name
+  set FILE_NAME = "EMC_post"  # Your preferred directory name
   set repository = "https://github.com/NOAA-EMC/EMC_post"
-  #set branch = "release/public-v2"
-  set branch = "upp_v9.0.0"
+  set branch = "release/public-v2"
+  #set branch = "develop"
+else if ($source == 2)then
+  set FILE_NAME = "EMC_post"  # Your preferred directory name
+  #set upppath = "/scratch2/BMC/det/KaYee/UPP/UFFDA/new_UFFDA/EMC_post" # Local path that you want to copy from (no tar file)
+  set upppath = "/glade/work/kayee/UPP/UFFDA/public_v2/EMC_post"
 endif
-set COMPUTER_OPTION = "cheyenne" # hera/cheyenne/puffling for now 
-set CONFIG_OPTION = (8) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar)
-set DEBUG = 0
+set COMPUTER_OPTION = "cheyenne" # hera/cheyenne
+set CONFIG_OPTION = (8 4) # 4)Intel(dmpar) 8)GNU(dmpar) for Cheyenne ONLY
 ###############################################
 ###############################################
 #!!!!!!!!!STOP User Define Here!!!!!!!!!!!!!!!#
@@ -50,16 +40,12 @@ echo 'CONFIG_OPTION = ' $CONFIG_OPTION
 echo 'You are compiling the UPP code on' $COMPUTER_OPTION'.'
 if ($source == 1)then
   rm -rf $FILE_NAME
-  rm -rf EMC_post
-  git clone -b $branch --recurse-submodules $repository 
-  cp -ra EMC_post/comupp $FILE_NAME
+  git clone -b $branch --recurse-submodules $repository $FILE_NAME
 else if ($source == 2)then
   cp -ra $upppath $FILE_NAME
   cd $FILE_NAME
   ./clean -a
   cd ../
-else if ($source == 3)then
-  git clone -b $branch --recurse-submodules $repository $FILE_NAME
 endif
 if ($? != 0)then
   echo "error cloning repository"

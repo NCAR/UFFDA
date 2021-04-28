@@ -2,13 +2,15 @@
 #PBS -N upp_intel 
 #PBS -A P48503002 
 #PBS -j oe
-#PBS -l select=8:mpiprocs=12:ompthreads=1
+#PBS -l select=12:mpiprocs=12:ompthreads=1
+##PBS -l select=8:mpiprocs=12:ompthreads=1
 #PBS -q regular 
-#PBS -l walltime=00:40:00 
+#PBS -l walltime=00:10:00 
+##PBS -l walltime=00:40:00 
 
 echo 'Starting UPP: `date` ' > startupp
 
-./run_upp
+./run_unipost
 
 echo 'End UPP: `date` ' > endupp
 
