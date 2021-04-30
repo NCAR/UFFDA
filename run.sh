@@ -23,12 +23,11 @@ set echo
 ###############################################
 #!!!!!!!!!!!!!!User Define Here!!!!!!!!!!!!!!!#
 ###############################################
- set FILE_NAME = "EMC_post_v2"   # should match the FILE_NAME from compile.sh
- #set exec_name = "upp.x" # upp.x for develop branch
- set exec_name = "ncep_post" # ncep_post for release/public-v2 branch
+ set FILE_NAME = "EMC_post"   # should match the FILE_NAME from compile.sh
+ set exec_name = "upp.x" # upp.x for develop branch
+ #set exec_name = "ncep_post" # ncep_post for release/public-v2 branch
  set account = "P48503002" # project account to charge on the machine
- set RunPath = '/glade/scratch/hertneky/upp_regtest/UFFDA' # where you want to run the regression test
- #set RunPath = '/scratch2/BMC/det/KaYee/UPP/UFFDA/new_UFFDA/' # where you want to run the regression test
+ set RunPath = '/glade/scratch/your_run_directory_path/' # where you want to run the regression test
  set numR  = 6 # # of test cases (please reference the README for case descriptions)
  set COMPUTER_OPTION = "cheyenne" # hera/cheyenne
  set CONFIG_OPTION = (4 8) # 4)Intel(dmpar) 8)GNU(dmpar) for Cheyenne ONLY
@@ -122,10 +121,10 @@ set echo
      cd postprd
      ln -svf $ExtraPath/*.pl .
      if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE")then
-       ln -svf $ExtraPath/wgrib2 .
+       module load grib-bins
        set flag=""
      else if($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA")then
-       module load wgrib wgrib2/2.0.8
+       module load wgrib2/2.0.8
        set flag=".hera"
      else
        set flag=""
@@ -165,6 +164,7 @@ set echo
        set txtCntrlFile = 'postxconfig-NT-fv3lam.txt'
        set startdate = '2019101112'
        set tag = 'BGRD3D'
+       if($exec_name == "upp.x") set tag = 'PRSLEV'
        set fhr  = '04'
        set lastfhr  = 4
      else if($bb == 4)then
@@ -174,6 +174,7 @@ set echo
        set txtCntrlFile = 'postxconfig-NT-fv3lam.txt'
        set startdate = '2019111112'
        set tag = 'BGRD3D'
+       if($exec_name == "upp.x") set tag = 'PRSLEV'
        set fhr  = '00'
        set lastfhr  = 12
      else if($bb == 5)then
@@ -183,6 +184,7 @@ set echo
        set txtCntrlFile = 'postxconfig-NT-fv3lam.txt'
        set startdate = '2019061512'
        set tag = 'BGRD3D'
+       if($exec_name == "upp.x") set tag = 'PRSLEV'
        set fhr  = '00'
        set lastfhr  = 12
      else if($bb == 6)then
@@ -243,8 +245,10 @@ set echo
      cp $ExtraPath/run_rt.pbs$flag .
      if($CONFIG_OPTION[$ii] == 4)then
        eval set CNTLCase = ${CNTLPath}/Intel_dmpar/\'ps\'${bb}
+       if($exec_name == "upp.x") eval set CNTLCase = ${CNTLPath}/Intel_dmpar/EMC/\'ps\'${bb}
      else if($CONFIG_OPTION[$ii] == 8)then
        eval set CNTLCase = ${CNTLPath}/GNU_dmpar/\'ps\'${bb}
+       if($exec_name == "upp.x") eval set CNTLCase = ${CNTLPath}/GNU_dmpar/EMC/\'ps\'${bb}
      endif
      echo 'CNTLCase =' $CNTLCase
      ln -svf $CNTLCase/* .
@@ -280,9 +284,10 @@ set echo
        sed -i '/#wgrib2/r add.txt' run_mpi.pbs
        sed -i "0,/account=/{s/account=.*/account=${account}/}" run_mpi.pbs
        sed -i 's;^cd .*;cd '"$DOMAINPATH/postprd/"';' run_mpi.pbs
-       if($bb == 5) sed -i "0,/time=/{s/time=.*/time=00:55:00/}" run_mpi.pbs
+       if($bb == 5) sed -i "0,/time=/{s/time=.*/time=00:59:00/}" run_mpi.pbs
          sbatch ./run_mpi.pbs
        else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE")then
+         if($bb == 5) sed -i "0,/walltime=/{s/walltime=.*/walltime=00:30:00/}" run_rt.pbs
          sed -i "0,/-A /{s/-A .*/-A ${account}/}" run_mpi.pbs
          qsub ./run_mpi.pbs
          echo 'submit jobs'

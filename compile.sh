@@ -21,18 +21,16 @@
 ###############################################
 set source = (1) # 1) source code from github 2) source code from local path 
 if ($source == 1)then
-  set FILE_NAME = "EMC_post_v2"  # Your preferred directory name
+  set FILE_NAME = "EMC_post"  # Your preferred directory name
   set repository = "https://github.com/NOAA-EMC/EMC_post"
-  set branch = "release/public-v2"
-  #set branch = "develop"
-  #set branch = "dtc_script_mod"
+  #set branch = "release/public-v2"
+  set branch = "develop"
 else if ($source == 2)then
   set FILE_NAME = "EMC_post"  # Your preferred directory name
-  #set upppath = "/scratch2/BMC/det/KaYee/UPP/UFFDA/new_UFFDA/EMC_post" # Local path that you want to copy from (no tar file)
-  set upppath = "/glade/work/kayee/UPP/UFFDA/public_v2/EMC_post"
+  set upppath = "/scratch2/BMC/det/KaYee/UPP/UFFDA/new_UFFDA/EMC_post" # Local path that you want to copy from (no tar file)
 endif
-set COMPUTER_OPTION = "cheyenne" # hera/cheyenne
-set CONFIG_OPTION = (4 8) # 4)Intel(dmpar) 8)GNU(dmpar) for Cheyenne ONLY
+set COMPUTER_OPTION = "hera" # hera/cheyenne
+set CONFIG_OPTION = (4) # 4)Intel(dmpar) 8)GNU(dmpar) for Cheyenne ONLY
 ###############################################
 ###############################################
 #!!!!!!!!!STOP User Define Here!!!!!!!!!!!!!!!#
