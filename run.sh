@@ -287,7 +287,7 @@ set echo
        if($bb == 5) sed -i "0,/time=/{s/time=.*/time=00:59:00/}" run_mpi.pbs
          sbatch ./run_mpi.pbs
        else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE")then
-         if($bb == 5) sed -i "0,/walltime=/{s/walltime=.*/walltime=00:30:00/}" run_rt.pbs
+         if($bb == 5) sed -i "0,/walltime=/{s/walltime=.*/walltime=00:50:00/}" run_rt.pbs
          sed -i "0,/-A /{s/-A .*/-A ${account}/}" run_mpi.pbs
          qsub ./run_mpi.pbs
          echo 'submit jobs'
