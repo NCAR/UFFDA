@@ -2,64 +2,85 @@
 #         Testing frame work for UPP          #
 ###############################################
 #
+# The UPP Framework For Diagnosing Anomalies
+# (UFFDA) is designed to test a suite of
+# relevant cases for reproducability of the UPP
+# output.
+# Note: The UFFDA compile/run scripts are set
+# up to run on the NCAR Cheyenne or NOAA Hera
+# systems only and would require considerable
+# modifications to run on another system.
+#
+###############################################
+#
 # Documented: Ka Yee Wong (NOAA/GSD)  Sep 2018
 #     Edited: Ka Yee Wong (NOAA/GSD)  Nov 2018
+#    Updated: Tracy Hertneky (NCAR/DTC) Apr 2021
 #
 ###############################################
 #
 # Tested on Cheyenne:                 Sep 2018
 # Tested on Cheyenne:                 Nov 2018
 # Tested on Cheyenne:                 Jan 2019
+# Tested on Cheyenne/Hera:            Apr 2021
 #
 ###############################################
 # Compile UPP with compile.sh
 How to run compile.sh?
 1) Choose your UPP source code location:
-set source = (3) # 1) source code from vlab 2) source code from local path 3) source code from github
-i) Set your directory name(e.g. DTC_UPP_github_v6f54859):
-FILE_NAME = "your_preferred_directory_name"
-ii) Set the UPP vlab/github path:
-repository = "your_github_path"
-set branch = "release_tag"
-Or set the local UPP path:
-set upppath = "/gpfs/fs1/work/user/UPPV3.2"  # Local path that you want to copy from (no tar file)
+  set source = (1) # 1) source code from local path 2) source code from github
+  i) Set your directory name(e.g. DTC_UPP_github_v6f54859):
+    FILE_NAME = "your_preferred_directory_name"
+  ii) Set the UPP github path and branch/tag:
+    repository = "your_github_path"
+    set branch = "release_tag"
+  Or set the local UPP path:
+    set upppath = "/gpfs/fs1/work/user/UPPV4.1"  # Local path that you want to copy from (no tar file)
 2) Set the machine name: 
-COMPUTER_OPTION = "machine_name" # hera/cheyenne/hydra for now
+  COMPUTER_OPTION = "machine_name" # hera/cheyenne for now
 3) Set your compiler type: 
-CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 3)Intel(serial) 4)Intel(dmpar) 7)GNU(serial) 8)GNU(dmpar)
+  CONFIG_OPTION = (4 8) # 4)Intel(dmpar) 8)GNU(dmpar)
 4) run the shell script
-./compile.sh
-#note!!! Please check your "targetDir" if you are NOT running this script on Cheyenne/Theia/Hydra !!!
-5) Please enter your vlab/github login and password 
-Cloning into 'UFFDA'...
-Username for 'https://github.com': 
-Password for 'https://your_name@github.com': 
-remote: Enumerating objects: 37, done.
-remote: Counting objects: 100% (37/37), done.
-remote: Compressing objects: 100% (25/25), done.
-remote: Total 94 (delta 23), reused 22 (delta 12), pack-reused 57
-Unpacking objects: 100% (94/94), done.
+  ./compile.sh
 
 #  Run test cases with run.sh
 How to run run.sh?
 1) Set your file name (must match your compiled UPP directory name)
-FILE_NAME = "your_file_name" # should match the FILE_NAME from compile.sh
-2) type of GRIB input file 
-outFormat = 'grib' # 'grib' or 'grib2'
-3) Set your path for the test case results to be located 
-RunPath = 'your_working_directory_path'
-4) Set the number of test cases (10 cases max)
-numR  = 10 
-5) Set the machine name: 
-COMPUTER_OPTION = "machine_name" # hera/cheyenne/hydra for now
-6) Set your compiler type: 
-CONFIG_OPTION = (4 3 8 7) #1)PGI(serial) 2)PGI(dmpar) 4)Intel(dmpar) 3)Intel(serial) 7)GNU(serial) 8)GNU(dmpar)
-7) Set test case data path
-DataPath = 'your_data_path'
-8)Set the path for the extra files # where the *.pbs *.pl files located including the wgrib or/and wgrib2
-ExtraPath = 'your_path'
-9)Set the path for the bench mark files #for the regression test      
-10) run the shell script
-qsub ./run.sh   # on cheyenne
-sbatch run.slurm # on hera
-# Please check your "DataPath", "ExtraPath" and "CNTLPath" if you are NOT running this script on Cheyenne/Theia/Hydra.
+  FILE_NAME = "your_file_name" # should match the FILE_NAME from compile.sh
+2) Set the executable name
+  exec_name = "ncep_post" for release/public-v2
+  exec_name = "upp.x" for develop
+3) Set your project account to charge on the system
+  account = "your_project_account"
+4) Set your path for the test case results to be located 
+  RunPath = 'your_working_directory_path'
+5) Set the number of test cases (6 cases max; detailed in the table below)
+  numR  = 6
+6) Set the machine name: 
+  COMPUTER_OPTION = "machine_name" # hera/cheyenne for now
+7) Set your compiler type: 
+  CONFIG_OPTION = (4 8) # 4)Intel(dmpar) 8)GNU(dmpar)
+8) run the shell script (this will submit the jobs for runnning each test case)
+  ./run.sh
+
+## Regression Test Case Descriptions
+|                  | PS1        | PS2             | PS3             | PS4                      | PS5                       | PS6            |
+|------------------|------------|-----------------|-----------------|--------------------------|---------------------------|----------------|
+| Case Description | GFS nemsio | EMC RT: FV3 GFS | EMC RT: FV3 LAM | Cold air outbreak        | Severe weather            | Severe weather |
+| Initialization   | 2019100300 | 2020020400      | 2019101112      | 2019111112               | 2019061512                | 2019082900     |
+| Forecast Hours   | F00-F06    | F06             | F04             | F00-F12                  | F00-F12                   | F00-F12        |
+| Application      | NA         | OP Config       | OP Config       | SRW v1.0.0 beta          | SRW v1.0.0 beta           | MRW v1.1.0     |
+| Physics          | Zhao MP    | GFSv16          | GFSv15          | CCPP enabled GFS_v16beta | CCPP enabled RRFS_v1alpha | GFSv15.2       |
+| Grid Length      | 13 km      | 13 km           | 3 km            | 25 km                    | 3 km                      | 25 km          |
+| File Format      | nemsio     | netcdf          | netcdf          | netcdf                   | netcdf                    | netcdf         |
+
+EMC Tests:
+1) PS2 GFS Configuration
+   GFS v16 physics: https://www.weather.gov/media/notification/pdf2/scn21-20_gfsv16.0_aac.pdf
+   Microphysics: JFDL
+   Model output: netcdf, gaussian grid (13 km, 127 layers)
+2) PS3 LAM configuration
+   Region: CONUS
+   Physics: GFS v15
+   Microphysics: Thompson
+   Model output: netcdf, rotated latlon (3km, 60 layers)

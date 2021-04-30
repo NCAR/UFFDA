@@ -1,4 +1,7 @@
 #!/bin/csh
+#
+# This script builds the UPP code.
+#
 ###############################################
 #
 # Oirg. Code: Ka Yee Wong (NOAA/GSD) Jun  2017
@@ -18,17 +21,18 @@
 ###############################################
 set source = (1) # 1) source code from github 2) source code from local path 
 if ($source == 1)then
-  set FILE_NAME = "EMC_post"  # Your preferred directory name
+  set FILE_NAME = "EMC_post_v2"  # Your preferred directory name
   set repository = "https://github.com/NOAA-EMC/EMC_post"
   set branch = "release/public-v2"
   #set branch = "develop"
+  #set branch = "dtc_script_mod"
 else if ($source == 2)then
   set FILE_NAME = "EMC_post"  # Your preferred directory name
   #set upppath = "/scratch2/BMC/det/KaYee/UPP/UFFDA/new_UFFDA/EMC_post" # Local path that you want to copy from (no tar file)
   set upppath = "/glade/work/kayee/UPP/UFFDA/public_v2/EMC_post"
 endif
 set COMPUTER_OPTION = "cheyenne" # hera/cheyenne
-set CONFIG_OPTION = (8 4) # 4)Intel(dmpar) 8)GNU(dmpar) for Cheyenne ONLY
+set CONFIG_OPTION = (4 8) # 4)Intel(dmpar) 8)GNU(dmpar) for Cheyenne ONLY
 ###############################################
 ###############################################
 #!!!!!!!!!STOP User Define Here!!!!!!!!!!!!!!!#
@@ -38,9 +42,12 @@ set NUM_CONFIG = $#CONFIG_OPTION  # # of configurations
 echo 'NUM_CONFIG = ' $NUM_CONFIG
 echo 'CONFIG_OPTION = ' $CONFIG_OPTION
 echo 'You are compiling the UPP code on' $COMPUTER_OPTION'.'
+
+# Clone the repository
 if ($source == 1)then
   rm -rf $FILE_NAME
   git clone -b $branch --recurse-submodules $repository $FILE_NAME
+# Copy local path and make clean
 else if ($source == 2)then
   cp -ra $upppath $FILE_NAME
   cd $FILE_NAME
@@ -52,6 +59,7 @@ if ($? != 0)then
   exit
 endif
 
+# Load modules and set environment based on system/configuration
 set i = 1
 while ($i <= $NUM_CONFIG)
 if($CONFIG_OPTION[$i] == 4)then
@@ -67,7 +75,6 @@ if($CONFIG_OPTION[$i] == 4)then
     setenv FC ifort
     mkdir build && cd build
     cmake .. -DCMAKE_INSTALL_PREFIX=.. -DCMAKE_PREFIX_PATH=/scratch1/BMC/gmtb/software/NCEPLIBS-ufs-v2.0.0/intel-18.0.5.274/impi-2018.0.4
-
   else if ($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
     module purge
     module load intel/19.1.1 cmake/3.16.4 mpt/2.19 ncarenv/1.3
@@ -77,7 +84,7 @@ if($CONFIG_OPTION[$i] == 4)then
     mkdir build && cd build
     cmake .. -DCMAKE_INSTALL_PREFIX=.. -DCMAKE_PREFIX_PATH=/glade/p/ral/jntp/GMTB/tools/NCEPLIBS-ufs-v2.0.0/intel-19.1.1/mpt-2.19/
   endif
-else if($CONFIG_OPTION[$i] == 8 || $CONFIG_OPTION[$i] == 12)then
+else if($CONFIG_OPTION[$i] == 8)then
   rm -rf ${FILE_NAME}_GNU_dmpar
   cp -ra ${FILE_NAME} ${FILE_NAME}_GNU_dmpar
   cd ${FILE_NAME}_GNU_dmpar
@@ -94,11 +101,7 @@ else if($CONFIG_OPTION[$i] == 8 || $CONFIG_OPTION[$i] == 12)then
     #cmake .. -DCMAKE_INSTALL_PREFIX=.. -DCMAKE_PREFIX_PATH=/scratch1/BMC/gmtb/software/NCEPLIBS-ufs-v2.0.0/gnu-9.2.0/mpich-3.3.2
   else if ($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
     module purge
-    module load ncarenv/1.3
-    module load gnu/10.1.0
-    module load  ncarcompilers/0.5.0
-    module load mpt/2.19
-    module load cmake/3.18.2
+    module load ncarenv/1.3  gnu/10.1.0  ncarcompilers/0.5.0  mpt/2.19  cmake/3.18.2
     module use -a /glade/p/ral/jntp/GMTB/tools/NCEPLIBS-ufs-v2.0.0/gnu-10.1.0/mpt-2.19/modules
     module load NCEPLIBS/2.0.0
     setenv CXX g++
@@ -108,8 +111,11 @@ else if($CONFIG_OPTION[$i] == 8 || $CONFIG_OPTION[$i] == 12)then
     cmake .. -DCMAKE_INSTALL_PREFIX=.. -DCMAKE_PREFIX_PATH=/glade/p/ral/jntp/GMTB/tools/NCEPLIBS-ufs-v2.0.0/gnu-10.1.0/mpt-2.19/
   endif
 endif
+
+# Build UPP
 make install > compile.log
 
+# Get the CRTM fix files
 cd ../
 mkdir crtm && cd crtm
 wget https://github.com/NOAA-EMC/EMC_post/releases/download/upp-v9.0.0/fix.tar.gz
@@ -121,4 +127,3 @@ end
 
 echo 'Exit'
 exit
-
