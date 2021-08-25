@@ -116,7 +116,7 @@ make install > compile.log
 # Get the CRTM fix files
 cd ../
 mkdir crtm && cd crtm
-wget https://github.com/NOAA-EMC/EMC_post/releases/download/upp-v9.0.0/fix.tar.gz
+wget https://github.com/NOAA-EMC/EMC_post/releases/download/upp_v9.0.0/fix.tar.gz
 tar -xzf fix.tar.gz
 
 cd ../..
