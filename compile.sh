@@ -44,7 +44,7 @@ echo 'You are compiling the UPP code on' $COMPUTER_OPTION'.'
 # Clone the repository
 if ($source == 1)then
   rm -rf $FILE_NAME
-  git clone -b $branch --recurse-submodules $repository $FILE_NAME
+  git clone -b $branch $repository $FILE_NAME
 # Copy local path and make clean
 else if ($source == 2)then
   cp -ra $upppath $FILE_NAME
