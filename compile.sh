@@ -21,13 +21,13 @@
 ###############################################
 set source = (1) # 1) source code from github 2) source code from local path 
 if ($source == 1)then
-  set FILE_NAME = "EMC_post"  # Your preferred directory name
-  set repository = "https://github.com/NOAA-EMC/EMC_post"
+  set FILE_NAME = "UPP"  # Your preferred directory name
+  set repository = "https://github.com/NOAA-EMC/UPP"
   #set branch = "release/public-v2"
   set branch = "develop"
 else if ($source == 2)then
-  set FILE_NAME = "EMC_post"  # Your preferred directory name
-  set upppath = "/scratch2/BMC/det/KaYee/UPP/UFFDA/new_UFFDA/EMC_post" # Local path that you want to copy from (no tar file)
+  set FILE_NAME = "UPP"  # Your preferred directory name
+  set upppath = "/scratch2/BMC/det/KaYee/UPP/UFFDA/" # Local path that you want to copy from (no tar file)
 endif
 set COMPUTER_OPTION = "hera" # hera/cheyenne
 set CONFIG_OPTION = (4) # 4)Intel(dmpar) 8)GNU(dmpar) for Cheyenne ONLY
@@ -44,7 +44,7 @@ echo 'You are compiling the UPP code on' $COMPUTER_OPTION'.'
 # Clone the repository
 if ($source == 1)then
   rm -rf $FILE_NAME
-  git clone -b $branch --recurse-submodules $repository $FILE_NAME
+  git clone -b $branch $repository $FILE_NAME
 # Copy local path and make clean
 else if ($source == 2)then
   cp -ra $upppath $FILE_NAME
@@ -116,7 +116,7 @@ make install > compile.log
 # Get the CRTM fix files
 cd ../
 mkdir crtm && cd crtm
-wget https://github.com/NOAA-EMC/EMC_post/releases/download/upp-v9.0.0/fix.tar.gz
+wget https://github.com/NOAA-EMC/EMC_post/releases/download/upp_v9.0.0/fix.tar.gz
 tar -xzf fix.tar.gz
 
 cd ../..
