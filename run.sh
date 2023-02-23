@@ -23,14 +23,14 @@ set echo
 ###############################################
 #!!!!!!!!!!!!!!User Define Here!!!!!!!!!!!!!!!#
 ###############################################
- set FILE_NAME = "EMC_post"   # should match the FILE_NAME from compile.sh
+ set FILE_NAME = "UPP_release"   # should match the FILE_NAME from compile.sh
  set exec_name = "upp.x" # upp.x for develop branch
  #set exec_name = "ncep_post" # ncep_post for release/public-v2 branch
  set account = "P48503002" # project account to charge on the machine
  set RunPath = '/glade/scratch/your_run_directory_path/' # where you want to run the regression test
  set numR  = 6 # # of test cases (please reference the README for case descriptions)
- set COMPUTER_OPTION = "cheyenne" # hera/cheyenne
- set CONFIG_OPTION = (4 8) # 4)Intel(dmpar) 8)GNU(dmpar) for Cheyenne ONLY
+ set COMPUTER_OPTION = "hera" # hera/cheyenne
+ set CONFIG_OPTION = (4) # 4)Intel(dmpar) 8)GNU(dmpar) for Cheyenne ONLY
 #
 ###############################################
 ###############################################
@@ -65,11 +65,33 @@ set echo
      echo $CasesDir
      if ($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA") then
        module purge
-       module load intel/18.0.5.274  impi/2018.0.4  cmake/3.16.1
-       module use -a /scratch1/BMC/gmtb/software/NCEPLIBS-ufs-v2.0.0/intel-18.0.5.274/impi-2018.0.4
-       setenv CXX icpc
-       setenv CC icc
-       setenv FC ifort
+       module load cmake/3.16.1
+
+       module use /scratch2/NCEPDEV/nwprod/hpc-stack/libs/hpc-stack/modulefiles/stack
+       module load hpc/1.1.0
+       module load hpc-intel/18.0.5.274
+       module load hpc-impi/2018.0.4
+       
+       module load jasper/2.0.22
+       module load zlib/1.2.11
+       module load png/1.6.35
+
+       module load hdf5/1.10.6
+       module load netcdf/4.7.4
+
+       module load bacio/2.4.1
+       module load crtm/2.3.0
+       module load g2/3.4.1
+       module load g2tmpl/1.10.0
+       module load ip/3.3.3
+       module load nemsio/2.5.2
+       module load sfcio/1.4.1
+       module load sigio/2.3.2
+       module load sp/2.3.3
+       module load w3nco/2.4.1
+       module load w3emc/2.7.3
+       module load wrf_io/1.1.1
+
      else if($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
        module purge
        module load intel/19.1.1 cmake/3.16.4 mpt/2.19 ncarenv/1.3
@@ -124,7 +146,8 @@ set echo
        module load grib-bins
        set flag=""
      else if($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA")then
-       module load wgrib2/2.0.8
+       #module load intel/18.0.5.274
+       #module load wgrib2/2.0.8
        set flag=".hera"
      else
        set flag=""
@@ -135,23 +158,24 @@ set echo
      eval set DataCase = ${DataPath}\'ps\'${bb}
      echo $DataCase
      eval set DOMAINPATH = ${CasesDir}${case}
-     eval set postexec = ${UPPPath}\'/bin\'
+     #eval set postexec = ${UPPPath}\'/exec\'
+     eval set postexec = ${UPPPath}\'/exec\'
      echo $DOMAINPATH
 
      # Case setings for run_upp script
      if($bb == 1)then
        set dyncore = 'FV3'
        set model = 'GFS'
-       set inFormat = 'binarynemsiompiio'
+       set inFormat = 'netcdfpara'
        set txtCntrlFile = 'postxconfig-NT-GFS.txt'
-       set startdate = '2016100300'
+       set startdate = '2021021600'
        set tag = 'GFSPRS'
-       set fhr  = '00'
+       set fhr  = '06'
        set lastfhr  = 6
      else if($bb == 2)then
        set dyncore = 'FV3'
        set model = 'GFS'
-       set inFormat = 'netcdf'
+       set inFormat = 'netcdfpara'
        set txtCntrlFile = 'postxconfig-NT-GFS.txt'
        set startdate = '2020020400'
        set tag = 'GFSPRS'
@@ -160,7 +184,7 @@ set echo
      else if($bb == 3)then
        set dyncore = 'LAM'
        set model = 'LAM'
-       set inFormat = 'netcdf'
+       set inFormat = 'netcdfpara'
        set txtCntrlFile = 'postxconfig-NT-fv3lam.txt'
        set startdate = '2019101112'
        set tag = 'BGRD3D'
@@ -170,7 +194,7 @@ set echo
      else if($bb == 4)then
        set dyncore = 'LAM'
        set model = 'LAM'
-       set inFormat = 'netcdf'
+       set inFormat = 'netcdfpara'
        set txtCntrlFile = 'postxconfig-NT-fv3lam.txt'
        set startdate = '2019111112'
        set tag = 'BGRD3D'
@@ -180,7 +204,7 @@ set echo
      else if($bb == 5)then
        set dyncore = 'LAM'
        set model = 'LAM'
-       set inFormat = 'netcdf'
+       set inFormat = 'netcdfpara'
        set txtCntrlFile = 'postxconfig-NT-fv3lam.txt'
        set startdate = '2019061512'
        set tag = 'BGRD3D'
@@ -190,7 +214,7 @@ set echo
      else if($bb == 6)then
        set dyncore = 'FV3'
        set model = 'GFS'
-       set inFormat = 'netcdf'
+       set inFormat = 'netcdfpara'
        set txtCntrlFile = 'postxconfig-NT-GFS.txt'
        set startdate = '2019082900'
        set tag = 'GFSPRS'
@@ -202,9 +226,15 @@ set echo
      # Set run command and link batch scripts depending on system/configuration
      echo '$COMPUTER_OPTION' $COMPUTER_OPTION
      if($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA")then
-       if($bb == 1 || $bb == 4)then
-         set run_line = '"mpiexec '${postexec}'/'$exec_name'"'
+       #if($bb == 1 || $bb == 4)then
+       if($bb == 1 )then
+         set run_line = '"mpirun '${postexec}'/'$exec_name'"'
+         ln -svf $ExtraPath/run_mpi_para.pbs$flag run_mpi.pbs
+       else if($bb == 4 )then
+         #set run_line = '"mpiexec '${postexec}'/'$exec_name'"'
+         set run_line = '"mpirun '${postexec}'/'$exec_name'"'
          ln -svf $ExtraPath/run_mpi.pbs$flag run_mpi.pbs
+       #else if($bb == 2 || $bb == 3 || $bb == 5 || $bb == 6 || $bb == 7)then
        else if($bb == 2 || $bb == 3 || $bb == 5 || $bb == 6)then
          set run_line = '"mpirun '${postexec}'/'$exec_name'"'
          ln -svf $ExtraPath/run_mpi_hi.pbs$flag run_mpi.pbs
@@ -264,7 +294,7 @@ set echo
        if(($cc == 6 && $bb == 2))then
          if($cc >= 7)break
            echo $cmp_line >> add.txt
-       else if($bb == 1)then
+       else if($cc == 6 && $bb == 1)then
          if($cc >= 7)break
            echo $cmp_line >> add.txt
        else if(($cc == 4 && $bb == 3))then

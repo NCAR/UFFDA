@@ -30,9 +30,12 @@ echo 'Starting UPP: `date` ' > startupp
 
 cd  /scratch1/BMC/dtc/
 
-./run_unipost
+./run_upp
 
 echo 'End UPP: `date` ' > endupp
+
+module load intel/18.0.5.274
+module load wgrib2/2.0.8
 
 #wgrib2
 

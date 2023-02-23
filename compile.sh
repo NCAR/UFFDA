@@ -47,6 +47,7 @@ if ($source == 1)then
   git clone -b $branch $repository $FILE_NAME
 # Copy local path and make clean
 else if ($source == 2)then
+  rm -rf $FILE_NAME
   cp -ra $upppath $FILE_NAME
   cd $FILE_NAME
   ./clean -a
@@ -65,14 +66,6 @@ if($CONFIG_OPTION[$i] == 4)then
   cp -ra ${FILE_NAME} ${FILE_NAME}_Intel_dmpar
   cd ${FILE_NAME}_Intel_dmpar
   if ($COMPUTER_OPTION == "hera" || $COMPUTER_OPTION == "HERA") then
-    module purge
-    module load intel/18.0.5.274  impi/2018.0.4  cmake/3.16.1
-    module use -a /scratch1/BMC/gmtb/software/NCEPLIBS-ufs-v2.0.0/intel-18.0.5.274/impi-2018.0.4/
-    setenv CXX icpc
-    setenv CC icc
-    setenv FC ifort
-    mkdir build && cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=.. -DCMAKE_PREFIX_PATH=/scratch1/BMC/gmtb/software/NCEPLIBS-ufs-v2.0.0/intel-18.0.5.274/impi-2018.0.4
   else if ($COMPUTER_OPTION == "cheyenne" || $COMPUTER_OPTION == "CHEYENNE") then
     module purge
     module load intel/19.1.1 cmake/3.16.4 mpt/2.19 ncarenv/1.3
@@ -111,7 +104,8 @@ else if($CONFIG_OPTION[$i] == 8)then
 endif
 
 # Build UPP
-make install > compile.log
+cd tests
+./compile_upp.sh > compile.log
 
 # Get the CRTM fix files
 cd ../
