@@ -28,7 +28,10 @@
 #Aecho 'Starting UPP: `date` ' > startupp
 cd  /scratch1/BMC/dtc/
 
-mpirun -np 1 -genvall ./run_unipost
+module load intel/18.0.5.274
+module load wgrib2/2.0.8
+
+mpirun -np 1 -genvall ./run_upp
 
 #wgrib2
 rm core.*

@@ -28,7 +28,7 @@ echo 'Starting UPP: `date` ' > startupp
 
 cd  /scratch1/BMC/dtc/
 
-./run_unipost
+./run_upp
 
 echo 'End UPP: `date` ' > endupp
 mpirun -np 1 -genvall ./run_rt.pbs
